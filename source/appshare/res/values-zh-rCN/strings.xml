@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">IvyAppShare</string>
+	<string name="action_settings">设置</string>
+	
+	<string name="choose_app">已选%1$d项</string>
+
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
+
+    <ImageView
+        android:id="@+id/menuitem_icon_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:paddingLeft="2dp" />
+
+    <TextView
+        android:id="@+id/menuTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/menuitem_icon_right"
+        android:layout_toRightOf="@id/menuitem_icon_left"
+        android:background="@drawable/bg_popmenu_item"
+        android:drawablePadding="3.0dip"
+        android:gravity="center_vertical"
+        android:padding="2.0dip"
+        android:singleLine="true"
+        android:textColor="@color/popup_menu_text_color"
+        android:textSize="18.0sp" />
+
+    <ImageView
+        android:id="@id/menuitem_icon_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:paddingRight="2dp"
+        android:src="@drawable/bg_icon_select" />
+
+</RelativeLayout>

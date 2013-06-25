@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="list_main_textsize">18sp</dimen>
+    <dimen name="list_secondray_textsize">13sp</dimen>
+
+    <dimen name="listbar_main_textsize">18sp</dimen>
+    <dimen name="listbar_secondray_textsize">16sp</dimen>
+    
+    <dimen name="button_main_textsize">18sp</dimen>
+    <dimen name="button_secondary_textsize">15sp</dimen>
+    
+    <dimen name="list_contact_item_hall_title_textsize">20sp</dimen>
+
+    <dimen name="chat_buttom_image_button_width_height">45dp</dimen>
+    <dimen name="common_title_height">47dp</dimen>
+
+    <dimen name="user_setting_layout_heigth">60dp</dimen>
+    <dimen name="user_setting_textview_width">100dp</dimen>
+
+    <dimen name="side_menu_item_layout_width">220dp</dimen>
+    
+    <dimen name="popmenu_width">210.0dip</dimen>
+    <dimen name="broadcast_popmenu_width">120.0dip</dimen>
+    <dimen name="popmenu_yoffset">1.0dip</dimen>
+    <dimen name="popmenu_xoffset">-165.0dip</dimen>
+    <dimen name="broadcast_popmenu_xoffset">-80.0dip</dimen>
+
+    <dimen name="setting_margin">6dp</dimen>
+    <dimen name="setting_items_margin_top">12dp</dimen>
+
+    <dimen name="quick_person_info_textview_height">60dp</dimen>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <color name="action_bar_text_text_color">#ffffff</color>
+
+    <color name="action_bar_text_text_color_disabled">#ff8f8f8f</color>
+
+	<color name="list_main">#FF000000</color>
+    <color name="list_secondray">#FF808080</color>
+    <color name="list_red">#FFFF0000</color>
+
+    <color name="listbar_main">#FF000000</color>
+    <color name="listbar_secondray">#FF808080</color>
+    
+    <color name="name_online">#FF000000</color>
+    <color name="name_offline">#FFB0B0B0</color>
+    
+    <color name="imgbtn_transbackground">#000000</color>
+    
+    <color name="list_unread">#FFF0F0F0</color>
+    
+    <!-- SimpleImageButton force background color -->
+    <color name="image_button_on_focus">#178AB4</color>
+
+
+    <color name="list_contact_item_hall_title_color">#43B5F5</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="transparent_white">#66ffffff</color>
+    <color name="transparent_black">#D0000000</color>
+
+    <color name="table_color_selected">#FFFFFFFF</color>
+    <color name="table_color_normal">#A0FFFFFF</color>
+    <color name="selected_share_files">#99D6EB</color>
+</resources>
