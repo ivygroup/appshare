@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+      <ListView
+       android:id="@+id/shared_person"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="10dp"
+       android:layout_marginRight="15dp"
+       android:listSelector="@drawable/list_selector" />
+
     <include layout="@layout/include_action_bar"/>
 
     <GridView

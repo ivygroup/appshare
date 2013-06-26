@@ -9,5 +9,6 @@
 	<string name="ok">确定</string>
 	<string name="cancel">取消</string>
 	<string name="change_name">修改名称</string>
+    <string name="name_empty">用户名不能为空！</string>
 
 </resources>
