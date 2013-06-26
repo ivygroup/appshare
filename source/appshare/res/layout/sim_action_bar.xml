@@ -4,7 +4,7 @@
     android:layout_height="@dimen/common_title_height"
     android:background="@drawable/ab_solid_custom_blue_inverse_holo" >
 
-    <com.ivyappshare.widget.SimpleImageButton
+    <com.ivy.appshare.widget.SimpleImageButton
         android:id="@+id/btn_left"
         android:layout_width="@dimen/common_title_height"
         android:layout_height="@dimen/common_title_height"
@@ -43,7 +43,7 @@
 	    android:layout_height="@dimen/common_title_height"
 	    android:gravity="center" >
 	
-	    <com.ivyappshare.widget.SimpleImageButton
+	    <com.ivy.appshare.widget.SimpleImageButton
 	        android:id="@+id/btn_right"
 	        android:layout_width="@dimen/common_title_height"
 	        android:layout_height="@dimen/common_title_height"
