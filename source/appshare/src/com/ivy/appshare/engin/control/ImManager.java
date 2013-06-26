@@ -17,8 +17,8 @@ import com.ivy.appshare.engin.im.Im;
 import com.ivy.appshare.engin.im.ImFactory;
 import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.engin.im.Im.FileType;
-public class ImService extends Service {
-    private static final String TAG = "ImService";
+public class ImManager {
+    private static final String TAG = "ImManager";
 
     private Im mIm;
     private ImData mImData;
@@ -28,28 +28,10 @@ public class ImService extends Service {
     private SessionMessages mSessionMessages;
     private ImListener mImListener;
     private DaemonNotifaction mDaemonNotifaction;
-
-    // This is the object that receives interactions from clients.    See
-    // RemoteService for a more complete example.
-    private final IBinder mBinder = new LocalBinder();
-
     private UserStateMonitor mUserStateMonitor;
 
-    public class LocalBinder extends Binder {
-        public LocalBinder() {
-            Log.d(TAG, "LocalBinder construct");
-        }
 
-        public ImService getService() {
-            Log.d(TAG, "get Service called.");
-            return ImService.this;
-        }
-    }
-
-    @Override 
-    public void onCreate() { 
-        Log.d(TAG, "onCreate");
-
+    public ImManager() { 
         // Init ImData here, make sure it's the first time init it
         mImData = new ImData();
         mImData.ResetUnEndMessage();
@@ -74,9 +56,8 @@ public class ImService extends Service {
 
     }
 
-    @Override 
-    public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+
+    public void release() {
         mDaemonNotifaction.release();
         mDaemonNotifaction = null;
 
@@ -86,28 +67,11 @@ public class ImService extends Service {
 
         mIm.release();
         mIm = null;
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
-        return 0;
-    }
-
-    @Override 
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
-        return mBinder; 
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnBind");
-        return true;
     }
 
 
+
+    //=========================================
     // interface for Im
     public void upLine() {
         Log.i(TAG, "upLine");

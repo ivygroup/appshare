@@ -1,7 +1,6 @@
 package com.ivy.appshare.ui;
 
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -16,9 +15,10 @@ import android.widget.TextView;
 import com.ivy.appshare.R;
 import com.ivy.appshare.utils.APKLoader;
 import com.ivy.appshare.utils.CommonUtils;
+import com.ivy.appshare.utils.IvyActivityBase;
 
 
-public class AppListActivity extends Activity implements
+public class AppListActivity extends IvyActivityBase implements
 		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener {
 
 	private AppFreeShareAdapter mAppAdapter = null;

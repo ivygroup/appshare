@@ -8,8 +8,6 @@ import java.util.List;
 import android.util.Log;
 
 import com.ivy.appshare.engin.connection.ConnectionState;
-import com.ivy.appshare.engin.connection.IvyNetService;
-import com.ivy.appshare.engin.connection.IvyNetwork;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.control.PersonManager;
 import com.ivy.appshare.engin.im.Im;
@@ -621,66 +619,5 @@ public class Receiver implements Worker.PackageListener {
 	    }
 
 	    return false;
-	}
-
-	private class ThePersonKeys {
-	    String p1Key;
-	    String p2Key;
-	    boolean isSuccessful = false;
-	    boolean isHotSpot = false;
-	}
-	private boolean isSamePerson(Person p1 , Person p2) {
-		if (p1 == null || p2 == null) {
-			return false;
-		}
-
-		ThePersonKeys keys = getPersonKey(p1, p2);
-		if (keys.isSuccessful == false) {
-		    if (keys.isHotSpot) {
-		        return false;
-		    } else {
-		        return true;
-		    }
-		}
-		String p1Key = keys.p1Key;
-		String p2Key = keys.p2Key;
-
-		if (p1Key.compareTo(p2Key) == 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private ThePersonKeys getPersonKey(Person p1, Person p2) {
-	    ThePersonKeys keys = new ThePersonKeys();
-
-	    keys.isSuccessful = true;
-	    if (p1.mIP != null && p2.mIP != null) {
-	        keys.p1Key = p1.mIP.getHostAddress().toString();
-	        keys.p2Key = p2.mIP.getHostAddress().toString();
-	        return keys;
-	    }
-
-	    Log.i(TAG, "the person's IP is null. so, we use mac address to compare two person.");
-	    keys.p1Key = PersonManager.getPersonKey(p1);
-        keys.p2Key = PersonManager.getPersonKey(p2);
-        if (keys.p1Key != null && keys.p2Key != null) {
-            return keys;
-        }
-
-        Log.e(TAG, "the person's mac and ip is null, please check the code.");
-        keys.isSuccessful = false;
-        IvyNetService myService = IvyNetwork.getInstance().getIvyNetService();
-        if (myService != null) {
-            if (myService.getConnectionState().getHotspotState() == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
-                keys.isHotSpot = true;
-            } else {
-                keys.isHotSpot = false;
-            }
-        } else {
-            keys.isHotSpot = false;
-        }
-        return keys;
 	}
 }

@@ -17,11 +17,11 @@ import com.ivy.appshare.engin.im.Person;
 public class UserStateMonitor {
     private static final String TAG = "UserStateMonitor";
 
-    private ImService mImService;
+    private ImManager mImService;
     private String mPackageName;
     private BroadcastReceiver mScreenActionReceiver;
 
-    public UserStateMonitor(ImService imService) {
+    public UserStateMonitor(ImManager imService) {
         mImService = imService;
 
         mPackageName = MyApplication.getInstance().getPackageName();
