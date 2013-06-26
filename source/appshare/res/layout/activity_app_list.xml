@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/sim_action_bar"/>
+    <include layout="@layout/include_action_bar"/>
 
     <GridView
         android:id="@+id/gridview"

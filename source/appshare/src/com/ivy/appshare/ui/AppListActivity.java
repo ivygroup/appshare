@@ -2,6 +2,7 @@ package com.ivy.appshare.ui;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -81,7 +82,7 @@ public class AppListActivity extends IvyActivityBase implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.left_text_info:
-			View view = LayoutInflater.from(this).inflate(R.layout.change_user_name, null);
+			View view = LayoutInflater.from(this).inflate(R.layout.dlg_change_user_name, null);
 			final EditText mNameEditText = (EditText) view.findViewById(R.id.name);
 			mNameEditText.setText(mTextLeft.getText());
 
@@ -105,6 +106,14 @@ public class AppListActivity extends IvyActivityBase implements
 								}
 							}).setNegativeButton(R.string.cancel, null).show();
 			break;
+
+		case R.id.btn_right:
+		{
+		    Intent intent = new Intent();
+	        intent.setClass(this, SendActivity.class);
+	        startActivity(intent);
+		}
+		break;
 		}
 
 	}

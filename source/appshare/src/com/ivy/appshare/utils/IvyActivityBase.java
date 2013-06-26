@@ -26,7 +26,7 @@ public class IvyActivityBase extends Activity implements ServiceConnection {
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         if (mImManager != null) {
             mImManager.onResumeMyActivity();
@@ -34,7 +34,7 @@ public class IvyActivityBase extends Activity implements ServiceConnection {
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         if (mImManager != null) {
             mImManager.checkMyActive();
@@ -50,7 +50,7 @@ public class IvyActivityBase extends Activity implements ServiceConnection {
     } //*/
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         unbindService(this);
     }

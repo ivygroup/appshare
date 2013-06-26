@@ -48,7 +48,7 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 		View view = null;
 		ViewHolder holder = null;
 		if (convertview == null || convertview.getTag() == null) {
-			view = LayoutInflater.from(mContext).inflate(R.layout.list_app_item, null);
+			view = LayoutInflater.from(mContext).inflate(R.layout.listitem_app, null);
 			view.setClickable(true);
 			holder = new ViewHolder(view);
 			view.setTag(holder);
