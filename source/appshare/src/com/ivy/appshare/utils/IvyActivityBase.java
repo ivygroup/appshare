@@ -60,6 +60,7 @@ public class IvyActivityBase extends Activity implements ServiceConnection {
         mIvyService = ((IvyService.LocalBinder)service).getService();
         mIvyConnectionManager = mIvyService.getIvyConnectionManager();
         mImManager = mIvyService.getImManager();
+        mImManager.upLine();
     }
 
     @Override

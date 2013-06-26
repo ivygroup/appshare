@@ -105,7 +105,12 @@ public class PersonManager {
 //        	if (diffcount != 0) {
 //        		return diffcount;
 //        	}
-
+            if (arg0 == null || arg0.mNickName == null) {
+                return -1;
+            }
+            if (arg1 == null || arg1.mNickName == null) {
+                return 1;
+            }
             return arg0.mNickName.compareToIgnoreCase(arg1.mNickName);
         }
     }
