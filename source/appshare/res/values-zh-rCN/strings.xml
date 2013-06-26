@@ -6,4 +6,8 @@
 	
 	<string name="choose_app">已选%1$d项</string>
 
+	<string name="ok">确定</string>
+	<string name="cancel">取消</string>
+	<string name="change_name">修改名称</string>
+
 </resources>

@@ -7,4 +7,8 @@
 	
 	<string name="choose_app">%1$d item selected</string>
 
+	<string name="ok">OK</string>
+	<string name="cancel">Cancel</string>
+	<string name="change_name">Change Name</string>
+
 </resources>
