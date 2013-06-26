@@ -1,4 +1,4 @@
-package com.ivy.appshare.connection;
+package com.ivy.appshare.engin.connection;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -14,10 +14,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.ivy.appshare.MyApplication;
-import com.ivy.appshare.connection.implement.AccessPointInfo;
-import com.ivy.appshare.connection.implement.ConnectionManagement;
-import com.ivy.appshare.connection.implement.ConnectionStateListener;
-import com.ivy.appshare.constdefines.IvyMessages;
+import com.ivy.appshare.engin.connection.implement.AccessPointInfo;
+import com.ivy.appshare.engin.connection.implement.ConnectionManagement;
+import com.ivy.appshare.engin.connection.implement.ConnectionStateListener;
+import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.im.Person;
 

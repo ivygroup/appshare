@@ -1,4 +1,4 @@
-package com.ivy.appshare.connection;
+package com.ivy.appshare.engin.connection;
 
 public class ConnectionState {
 	public static final int CONNECTION_UNKNOWN = 0;

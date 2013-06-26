@@ -1,4 +1,4 @@
-package com.ivy.appshare.connection;
+package com.ivy.appshare.engin.connection;
 
 public class APInfo {
     String mSSID;

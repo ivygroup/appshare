@@ -1,4 +1,4 @@
-package com.ivy.appshare.connection.implement;
+package com.ivy.appshare.engin.connection.implement;
 
 import java.net.InetAddress;
 
@@ -7,7 +7,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
 import android.net.wifi.WifiInfo;
 
-import com.ivy.appshare.connection.ConnectionState;
+import com.ivy.appshare.engin.connection.ConnectionState;
 
 
 

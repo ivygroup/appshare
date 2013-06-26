@@ -125,7 +125,7 @@ public class EncodeDetector {
     }
 
     static{
-        System.loadLibrary("getip");
+        System.loadLibrary("appsharenative");
     }
 
     private native static String native_possibleEncoding(byte[] data);

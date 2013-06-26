@@ -7,9 +7,9 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.ivy.appshare.connection.ConnectionState;
-import com.ivy.appshare.connection.IvyNetService;
-import com.ivy.appshare.connection.IvyNetwork;
+import com.ivy.appshare.engin.connection.ConnectionState;
+import com.ivy.appshare.engin.connection.IvyNetService;
+import com.ivy.appshare.engin.connection.IvyNetwork;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.control.PersonManager;
 import com.ivy.appshare.engin.im.Im;

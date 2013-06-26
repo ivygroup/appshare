@@ -9,7 +9,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.ivy.appshare.constdefines.IvyMessages;
+import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.SessionMessages.SessionMessage;
 import com.ivy.appshare.engin.data.ImData;
 import com.ivy.appshare.engin.data.Table_Message;

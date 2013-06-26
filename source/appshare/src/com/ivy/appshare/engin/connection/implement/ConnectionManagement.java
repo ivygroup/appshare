@@ -1,4 +1,4 @@
-package com.ivy.appshare.connection.implement;
+package com.ivy.appshare.engin.connection.implement;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -29,7 +29,7 @@ import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.ivy.appshare.connection.ConnectionState;
+import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.control.LocalSetting;
 
 
@@ -988,7 +988,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
 
     private native int native_getHotspotIp(String node);
     static{
-        System.loadLibrary("getip");
+        System.loadLibrary("appsharenative");
         
         PHONE_MATCHER.add("samsung");
     }

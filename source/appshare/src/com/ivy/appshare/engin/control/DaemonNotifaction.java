@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.R;
-import com.ivy.appshare.constdefines.IvyMessages;
+import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.data.ImData;
 import com.ivy.appshare.engin.data.Table_Message;
 import com.ivy.appshare.engin.im.Person;
