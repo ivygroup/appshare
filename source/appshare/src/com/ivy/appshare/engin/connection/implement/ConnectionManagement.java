@@ -339,7 +339,11 @@ public class ConnectionManagement implements WifiStateChangedListener {
     public boolean isWifiEnabled(){
         return mWifiManager.isWifiEnabled();
     }
-    
+
+    public boolean enableWifi() {
+        return mWifiManager.setWifiEnabled(true);
+    }
+
     public boolean stopScan(){
         Log.d(TAG, "stopScan");
         if (false == mWifiManager.isWifiEnabled()){
@@ -673,10 +677,13 @@ public class ConnectionManagement implements WifiStateChangedListener {
     }
     
     private boolean isWifiAPConfigurationChangedByUs(WifiConfiguration wifiApConfig){
-        if (mIvyHotspotWifiConfigation == null){
+        if (mIvyHotspotWifiConfigation == null || mIvyHotspotWifiConfigation.SSID == null) {
             return false;
         }
-        
+        if (wifiApConfig == null || wifiApConfig.SSID == null) {
+            return false;
+        }
+
         if ((mIvyHotspotWifiConfigation.SSID.equals(wifiApConfig.SSID))
             && (mIvyHotspotWifiConfigation.BSSID.equals(wifiApConfig.BSSID))
             && (wifiApConfig.allowedAuthAlgorithms.get(AuthAlgorithm.OPEN))

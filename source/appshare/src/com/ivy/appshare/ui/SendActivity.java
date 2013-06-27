@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,9 +20,15 @@ import com.ivy.appshare.R;
 import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
+import com.ivy.appshare.engin.control.PersonManager;
+import com.ivy.appshare.engin.im.Im.FileType;
+import com.ivy.appshare.engin.im.Person;
+import com.ivy.appshare.engin.control.TranslateFileControl;
 import com.ivy.appshare.utils.IvyActivityBase;
 
-public class SendActivity extends IvyActivityBase implements OnClickListener {
+public class SendActivity extends IvyActivityBase implements OnClickListener, TranslateFileControl.TransProcessListener {
+
+    private static final int MESSAGE_SERVICE_CONNECTED = 0;
 
 
     private static final int MESSAGE_NETWORK_STATE_CHANGED = 10;    //
@@ -32,6 +39,8 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
     private static final int MESSAGE_NETWORK_CLEAR_IVYROOM= 12;
     private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P= 13;
 
+    private static final int MESSAGE_FILEPROCESS_CHANGED = 20;
+
 
     private SendListAdapter mAdapter = null;
     private ListView mListView = null;
@@ -40,6 +49,11 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
     private TextView mRightTextView;
 
     private List<String> mListSendItems;
+
+
+    private PersonBroadCastReceiver mPersonReceiver;
+    private MessageBroadCastReceiver mMessageReceiver;
+    private NetworkReceiver mNetworkReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +88,10 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
+                    case MESSAGE_SERVICE_CONNECTED:
+                        onResume();
+                        break;
+
                     case MESSAGE_NETWORK_STATE_CHANGED:
                         {
                             int type = msg.arg1;
@@ -95,6 +113,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+        registerMyReceivers();
         if (mIvyConnectionManager != null) {
             mIvyConnectionManager.createHotspot();
         }
@@ -106,14 +125,13 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
         if (mIvyConnectionManager != null) {
             mIvyConnectionManager.disableHotspot();
         }
+        unregisterMyReceivers();
     }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         super.onServiceConnected(name, service);
-        if (mIvyConnectionManager != null) {
-            mIvyConnectionManager.createHotspot();
-        }
+        mHandler.sendEmptyMessage(MESSAGE_SERVICE_CONNECTED);
     }
 
     @Override
@@ -149,21 +167,88 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
     }
 
 
+    private void registerMyReceivers() {
+        if (mImManager == null) {
+            return; // if no immanager, can't create receivers.
+        }
+
+        if (mPersonReceiver != null) {
+            return; // already create.
+        }
+
+        mPersonReceiver = new PersonBroadCastReceiver();
+        {
+            IntentFilter filter = new IntentFilter(IvyMessages.INTENT_PERSON);
+            registerReceiver(mPersonReceiver, filter);
+        }
+
+        mMessageReceiver = new MessageBroadCastReceiver();
+        {
+            if (mImManager != null) {
+                mImManager.getImListener().getTranslateFileControl().RegisterTransProcess(this);
+            }
+            IntentFilter filter = new IntentFilter(IvyMessages.INTENT_MESSAGE);
+            filter.setPriority(500);
+            registerReceiver(mMessageReceiver, filter);
+        }
+
+        mNetworkReceiver = new NetworkReceiver();
+        {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(IvyMessages.INTENT_NETWORK_AIRPLANE);
+            filter.addAction(IvyMessages.INTENT_NETWORK_STATECHANGE);
+            filter.addAction(IvyMessages.INTENT_NETWORK_FINISHSCANIVYROOM);
+            filter.addAction(IvyMessages.INTENT_NETWORK_DISCOVERYWIFIP2P);
+            registerReceiver(mNetworkReceiver, filter);
+        }
+    }
+
+    private void unregisterMyReceivers() {
+        if (mPersonReceiver != null) {
+            unregisterReceiver(mPersonReceiver);
+            mPersonReceiver = null;
+        }
+        if (mMessageReceiver != null) {
+            if (mImManager != null) {
+                mImManager.getImListener().getTranslateFileControl().UnRegisterTransProcess(this);
+            }
+            unregisterReceiver(mMessageReceiver);
+            mMessageReceiver = null;
+        }
+        if (mNetworkReceiver != null) {
+            unregisterReceiver(mNetworkReceiver);
+            mNetworkReceiver = null;
+        }
+    }
+
+
 
     private class PersonBroadCastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent)
         {
+            if (mImManager == null) {
+                return;
+            }
+
             int type = intent.getIntExtra(IvyMessages.PARAMETER_PERSON_TYPE, 0);
-            if (mImManager != null) {
-                //
-                /*if (mAdapter != null) {
-                    mAdapter.changeList(mImManager.getPersonListClone());
-                    mAdapter.notifyDataSetChanged();
-                }*/
+            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_PERSON_VALUE);
+            if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
+                Person person = PersonManager.getInstance().getPerson(personKey);
+                // TODO , ask user if send to this person.
+                switchBarAndToPerson(false);
+                mRightTextView.setText(person.mNickName);
+                mAdapter.beginTranslate(mImManager, person);
             }
         }
     }
 
+    private class MessageBroadCastReceiver extends BroadcastReceiver {
+        public void onReceive(Context context, Intent intent)
+        {
+            
+        }
+    }
+    
     private class NetworkReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -187,6 +272,19 @@ public class SendActivity extends IvyActivityBase implements OnClickListener {
                 mHandler.sendEmptyMessage(MESSAGE_NETWORK_DISCOVERYWIFIP2P);
             }
         }
-        
+    }
+
+    @Override
+    public void onSendFileProcess(int id, Person to, String name, FileType fileType, long pos,
+            long total) {
+        int progress = (int)(pos*100/total);
+        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_CHANGED, id, progress));
+    }
+
+    @Override
+    public void onReceiveProcess(int id, Person from, String name, FileType fileType, long pos,
+            long total) {
+        int progress = (int)(pos*100/total);
+        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_CHANGED, id, progress));        
     }
 }

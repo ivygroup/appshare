@@ -109,6 +109,13 @@ public class IvyConnectionManager implements ConnectionStateListener {
         }
         return mConnectionManagement.isWifiEnabled();
     }
+    
+    public void enableWifi() {
+        if (mConnectionManagement == null) {
+            return;
+        }
+        mConnectionManagement.enableWifi();
+    }
 
     public APInfo getConnectionInfo() {
         if (mConnectionManagement == null) {
