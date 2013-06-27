@@ -3,9 +3,15 @@ package com.ivy.appshare.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,11 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ivy.appshare.R;
+import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.utils.APKLoader;
 import com.ivy.appshare.utils.CommonUtils;
 import com.ivy.appshare.utils.IvyActivityBase;
-
 
 public class AppListActivity extends IvyActivityBase implements
 		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener {
@@ -37,6 +43,18 @@ public class AppListActivity extends IvyActivityBase implements
 	private ListView mSharedPersonList;
 
 	private LocalSetting mLocalSetting;
+	private Handler mHandler;
+	private int mFileSharedNum;
+	private String mFileShareSSID;
+	private String mFileShareName;
+	private List<String> mShareData;
+	private ArrayAdapter mAdapter;
+
+	private static final int MESSAGE_NETWORK_SCAN_FINISH = 0;
+	private static final int MESSAGE_NETWORK_CLEAR_IVYROOM = 1;
+	private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P = 2;
+	private static final int MESSAGE_NETWORK_STATE_CHANGED = 3;
+	private NetworkReceiver mNetworkReceiver = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +63,7 @@ public class AppListActivity extends IvyActivityBase implements
 		setContentView(R.layout.activity_app_list);
 
 		mLocalSetting = LocalSetting.getInstance();
+		mNetworkReceiver = new NetworkReceiver();
 
 		View actionbar = (View) findViewById(R.id.layout_title);
 		mTextSelected = ((TextView) actionbar
@@ -63,23 +82,30 @@ public class AppListActivity extends IvyActivityBase implements
 		mButtonRight.setVisibility(View.VISIBLE);
 		mButtonRight.setOnClickListener(this);
 
+		mShareData = new ArrayList<String>();
+		mAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_expandable_list_item_1,mShareData);
 		mSharedPersonList = (ListView) findViewById(R.id.shared_person);
-		mSharedPersonList.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_expandable_list_item_1,getData()));
-		if (getData().size() > 0) {
-			mSharedPersonList.setOnItemClickListener(new OnItemClickListener() {
+		mSharedPersonList.setAdapter(mAdapter);
+		mSharedPersonList.setOnItemClickListener(new OnItemClickListener() {
 
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					Toast.makeText(AppListActivity.this,
-							"您选择了" + getData().get(arg2), Toast.LENGTH_LONG)
-							.show();
-				}
-			});
-		} else {
-			mSharedPersonList.setVisibility(View.GONE);
-		}
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				mIvyConnectionManager.connectIvyNetwork(mFileShareSSID);
+				CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
+				.setTitle(R.string.wait_receive_dl_title)
+				.setMessage(R.string.wait_receive_dl_message)
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,int which) {
+								//Opt out
+								mIvyConnectionManager.disconnectFromIvyNetwork();
+							}
+				}).show().setCanceledOnTouchOutside(false);
+			}
+		});
 
 		mAPKLoader = new APKLoader();
 		mAPKLoader.init(this);
@@ -90,16 +116,37 @@ public class AppListActivity extends IvyActivityBase implements
 
 		mAppGridView.setAdapter(mAppAdapter);
 		mAPKLoader.setAdapter(mAppAdapter);
+		mHandler = new Handler(this.getMainLooper()) {
+			@Override
+			public void handleMessage(Message msg) {
+
+				switch (msg.what) {
+				case MESSAGE_NETWORK_STATE_CHANGED:
+				case MESSAGE_NETWORK_CLEAR_IVYROOM:
+				case MESSAGE_NETWORK_DISCOVERYWIFIP2P:
+				case MESSAGE_NETWORK_SCAN_FINISH:
+					updateList();
+					break;
+				}
+				super.handleMessage(msg);
+			}
+		};
+
 	}
 
-    private List<String> getData(){
+	private void updateList() {
+		mShareData.clear();
 
-        List<String> data = new ArrayList<String>();
-        data.add("测试数据1");
-        data.add("测试数据2");
+		for (int i = 0; i < mFileSharedNum; i++) {
+			mFileShareSSID = mIvyConnectionManager.getScanResult().get(i).getSSID();
+			mFileShareName = mIvyConnectionManager.getScanResult().get(i).getFriendlyName();
+			String fileShareList = getResources().getString(
+					R.string.share_list, mFileShareName, "n");
+			mShareData.add(fileShareList);
+		}
 
-        return data;
-    }
+		mAdapter.notifyDataSetChanged();
+	}
 
 	private void setSelectItemText(int count) {
 		String content = String.format(getString(R.string.choose_app), count);
@@ -109,6 +156,54 @@ public class AppListActivity extends IvyActivityBase implements
 	@Override
 	public void onSelectedChanged() {
 		setSelectItemText(mAppAdapter.getSelectItemCount());
+	}
+
+	@Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(IvyMessages.INTENT_NETWORK_AIRPLANE);
+        filter.addAction(IvyMessages.INTENT_NETWORK_STATECHANGE);
+        filter.addAction(IvyMessages.INTENT_NETWORK_FINISHSCANIVYROOM);
+        filter.addAction(IvyMessages.INTENT_NETWORK_DISCOVERYWIFIP2P);
+        registerReceiver(mNetworkReceiver, filter);
+    }
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(mNetworkReceiver);
+	}
+
+	private class NetworkReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+
+			mFileSharedNum = mIvyConnectionManager.getScanResult().size();
+
+			if (action.equals(IvyMessages.INTENT_NETWORK_STATECHANGE)) {
+				int type = intent.getIntExtra(IvyMessages.PARAMETER_NETWORK_STATECHANGE_TYPE, 0);
+				int state = intent.getIntExtra(IvyMessages.PARAMETER_NETWORK_STATECHANGE_STATE, 0);
+				String ssid = intent.getStringExtra(IvyMessages.PARAMETER_NETWORK_STATECHANGE_SSID);
+
+				// mNetworkState = state;
+				mHandler.sendMessage(mHandler.obtainMessage(
+						MESSAGE_NETWORK_STATE_CHANGED, type, state, ssid));
+
+			} else if (action.equals(IvyMessages.INTENT_NETWORK_FINISHSCANIVYROOM)) {
+				boolean isclear = intent.getBooleanExtra(
+								IvyMessages.PARAMETER_NETWORK_FINISHSCANIVYROOM_ISCLEAR,false);
+				if (isclear) {
+					mHandler.sendEmptyMessage(MESSAGE_NETWORK_CLEAR_IVYROOM);
+				} else {
+					mHandler.sendEmptyMessage(MESSAGE_NETWORK_SCAN_FINISH);
+				}
+			} else if (action.equals(IvyMessages.INTENT_NETWORK_DISCOVERYWIFIP2P)) {
+				mHandler.sendEmptyMessage(MESSAGE_NETWORK_DISCOVERYWIFIP2P);
+			}
+		}
 	}
 
 	@Override
@@ -138,7 +233,8 @@ public class AppListActivity extends IvyActivityBase implements
 									mLocalSetting.saveNickName(mNewName);
 									mTextLeft.setText(mNewName);
 								}
-							}).setNegativeButton(R.string.cancel, null).show();
+							}).setNegativeButton(R.string.cancel, null).show()
+							.setCanceledOnTouchOutside(false);
 			break;
 
 		case R.id.btn_right:

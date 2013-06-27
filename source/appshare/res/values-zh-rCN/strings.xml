@@ -3,7 +3,10 @@
 
 	<string name="app_name">IvyAppShare</string>
 	<string name="action_settings">设置</string>
-	
+
+	<string name="share_list">%1$s 分享了 %2$s 个应用。</string>
+	<string name="wait_receive_dl_title">等待</string>
+	<string name="wait_receive_dl_message">等待接受应用.</string>
 	<string name="choose_app">已选%1$d项</string>
 
 	<string name="ok">确定</string>
