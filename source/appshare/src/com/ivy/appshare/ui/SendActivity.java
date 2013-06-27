@@ -24,6 +24,7 @@ import com.ivy.appshare.engin.control.PersonManager;
 import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.engin.control.TranslateFileControl;
+import com.ivy.appshare.engin.data.Table_Message;
 import com.ivy.appshare.utils.IvyActivityBase;
 
 public class SendActivity extends IvyActivityBase implements OnClickListener, TranslateFileControl.TransProcessListener {
@@ -39,13 +40,20 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private static final int MESSAGE_NETWORK_CLEAR_IVYROOM= 12;
     private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P= 13;
 
-    private static final int MESSAGE_FILEPROCESS_CHANGED = 20;
+    /*private static final int MESSAGE_FILEPROCESS_BEGIN = 20;
+    private static final int MESSAGE_FILEPROCESS_CHANGED = 21;
+    private static final int MESSAGE_FILEPROCESS_OK = 22;
+    private static final int MESSAGE_FILEPROCESS_FAILED = 23;
+    private static final int MESSAGE_FILEPROCESS_TIMEOUT = 24;*/
+    private static final int MESSAGE_FILEPROCESS_STATE = 20;
+    private static final int MESSAGE_FILEPROCESS_CHANGED = 21;
 
 
     private SendListAdapter mAdapter = null;
     private ListView mListView = null;
     private Handler mHandler;
     private View mSwitchBar;
+    private TextView mCenterTextView;
     private TextView mRightTextView;
 
     private List<String> mListSendItems;
@@ -70,9 +78,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         TextView textLeft = ((TextView) actionbar.findViewById(R.id.left_text_info));
         textLeft.setVisibility(View.VISIBLE);
         textLeft.setText(LocalSetting.getInstance().getMySelf().mNickName);
-        TextView centerTextView = ((TextView) actionbar.findViewById(R.id.center_text_info));
-        centerTextView.setVisibility(View.VISIBLE);
-        centerTextView.setText(getResources().getString(R.string.sendto));
+        mCenterTextView = ((TextView) actionbar.findViewById(R.id.center_text_info));
+        mCenterTextView.setVisibility(View.VISIBLE);
+        mCenterTextView.setText(getResources().getString(R.string.waittosend));
         mSwitchBar = actionbar.findViewById(R.id.switching_bar);
         mRightTextView = ((TextView) actionbar.findViewById(R.id.right_text_info));
         switchBarAndToPerson(true);
@@ -103,6 +111,39 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                                 doDownLine();
                             }
                         }
+                        break;
+
+                    case MESSAGE_FILEPROCESS_STATE:
+                    {
+                        Intent intent = (Intent)msg.obj;
+                        int messageType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_TYPE, 0);
+                        int id = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_ID, 0);
+                        int messageState = intent.getIntExtra(IvyMessages.PARAMETER_MESSGAE_STATE, 0);
+                        int fileType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_FILE_TYPE, 0);
+                        String finename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
+                        boolean isMeSay = intent.getBooleanExtra(IvyMessages.PARAMETER_MESSAGE_SELF, true);
+                        String personKey = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_PERSON);
+                        Person person = PersonManager.getInstance().getPerson(personKey);
+
+                        if (messageState == Table_Message.STATE_BEGIN) {
+                            mAdapter.changeTransState_Begin(person, id);
+                        } else if (messageState == Table_Message.STATE_OK) {
+                            mAdapter.changeTransState_OK(person, id);
+                        } else if (messageState == Table_Message.STATE_FAILED) {
+                            mAdapter.changeTransState_Failed(person, id);
+                        } else if (messageState == Table_Message.STATE_TIMEOUT) {
+                            mAdapter.changeTransState_TimeOut(person, id);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                        break;
+
+                    case MESSAGE_FILEPROCESS_CHANGED:
+                    {
+                        FileProcessInfo info = (FileProcessInfo)msg.obj;
+                        mAdapter.changeTransState_Process(info.mPerson, info.mID, info.mPos, info.mTotal);
+                        mAdapter.notifyDataSetChanged();
+                    }
                         break;
                 }
                 super.handleMessage(msg);
@@ -236,6 +277,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                 Person person = PersonManager.getInstance().getPerson(personKey);
                 // TODO , ask user if send to this person.
                 switchBarAndToPerson(false);
+                mCenterTextView.setText(getResources().getString(R.string.sendto));
                 mRightTextView.setText(person.mNickName);
                 mAdapter.beginTranslate(mImManager, person);
             }
@@ -245,7 +287,29 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private class MessageBroadCastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent)
         {
+            int messageType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_TYPE, 0);
+            int id = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_ID, 0);
+            int messageState = intent.getIntExtra(IvyMessages.PARAMETER_MESSGAE_STATE, 0);
+            int fileType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_FILE_TYPE, 0);
+            String finename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
+            boolean isMeSay = intent.getBooleanExtra(IvyMessages.PARAMETER_MESSAGE_SELF, true);
+            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_PERSON);
+            Person person = PersonManager.getInstance().getPerson(personKey);
+
+            if (fileType != FileType.FileType_App.ordinal()) {
+                return;
+            }
+
+            if (messageType != IvyMessages.VALUE_MESSAGETYPE_UPDATE) {
+                return;
+            }
             
+            if (!isMeSay) {
+                return;
+            }
+
+            mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_STATE, intent));
+            abortBroadcast();
         }
     }
     
@@ -274,17 +338,33 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         }
     }
 
+    private static class FileProcessInfo {
+        public int mID;
+        public Person mPerson;
+        public long mPos;
+        public long mTotal;
+    }
     @Override
     public void onSendFileProcess(int id, Person to, String name, FileType fileType, long pos,
             long total) {
-        int progress = (int)(pos*100/total);
-        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_CHANGED, id, progress));
+        // int progress = (int)(pos*100/total);
+        FileProcessInfo info = new FileProcessInfo();
+        info.mID = id;
+        info.mPerson = to;
+        info.mPos = pos;
+        info.mTotal = total;
+        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_CHANGED, info));
     }
 
     @Override
     public void onReceiveProcess(int id, Person from, String name, FileType fileType, long pos,
             long total) {
-        int progress = (int)(pos*100/total);
-        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_CHANGED, id, progress));        
+        // int progress = (int)(pos*100/total);
+        /*FileProcessInfo info = new FileProcessInfo();
+        info.mID = id;
+        info.mPerson = from;
+        info.mPos = pos;
+        info.mTotal = total;
+        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FILEPROCESS_CHANGED, info));*/        
     }
 }

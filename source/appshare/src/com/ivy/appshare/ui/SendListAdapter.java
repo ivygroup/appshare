@@ -17,8 +17,8 @@ import android.widget.TextView;
 
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.control.ImManager;
-import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.engin.im.Im.FileType;
+import com.ivy.appshare.engin.im.Person;
 
 public class SendListAdapter extends BaseAdapter {
     private Context mContext;
@@ -59,14 +59,74 @@ public class SendListAdapter extends BaseAdapter {
     public void beginTranslate(ImManager imManager, Person toPerson) {
         mImManager = imManager;
         mToPerson = toPerson;
-        for (MyAppInfo info: mListSendItems) {
-            mImManager.sendFile(mToPerson, null, info.mFullPath, FileType.FileType_App);
+        synchronized (mListSendItems) {
+            for (MyAppInfo info: mListSendItems) {
+                int id = mImManager.sendFile(mToPerson, null, info.mFullPath, FileType.FileType_App);
+                info.mFileIDForListener = id;
+            }    
         }
+    }
+
+    public void changeTransState_Begin(Person person, int fileID) {
+        MyAppInfo info = getItemById(fileID);
+        if (info == null) {
+            return;
+        }
+        if (info.mTransState != TransState.READY) {
+            return;
+        }
+        info.mTransState = TransState.BEGIN;
+        info.mPos = 0;
+        info.mTotal = 100;
+    }
+
+    public void changeTransState_Process(Person person, int fileID, long pos, long total) {
+        MyAppInfo info = getItemById(fileID);
+        if (info == null) {
+            return;
+        }
+        if (info.mTransState != TransState.TRANSING && info.mTransState != TransState.BEGIN) {
+            return;
+        }
+        if (pos <= info.mPos) {
+            return;
+        }
+        info.mTransState = TransState.TRANSING;
+        info.mPos = pos;
+        info.mTotal = total;
+    }
+
+    public void changeTransState_OK(Person person, int fileID) {
+        MyAppInfo info = getItemById(fileID);
+        if (info == null) {
+            return;
+        }
+        info.mTransState = TransState.OK;
+        info.mPos = 100;
+        info.mTotal = 100;
+    }
+
+    public void changeTransState_Failed(Person person, int fileID) {
+        MyAppInfo info = getItemById(fileID);
+        if (info == null) {
+            return;
+        }
+        info.mTransState = TransState.FAILED;
+    }
+
+    public void changeTransState_TimeOut(Person person, int fileID) {
+        MyAppInfo info = getItemById(fileID);
+        if (info == null) {
+            return;
+        }
+        info.mTransState = TransState.TIMEOUT;
     }
 
     @Override
     public int getCount() {
-        return mListSendItems.size();
+        synchronized (mListSendItems) {
+            return mListSendItems.size();
+        }
     }
 
     @Override
@@ -96,6 +156,7 @@ public class SendListAdapter extends BaseAdapter {
             myClass.mFileSize = (TextView)view.findViewById(R.id.size);
             myClass.mProgressLinearLayout = (LinearLayout)view.findViewById(R.id.progress_layout);
             myClass.mProgressBar = (ProgressBar)view.findViewById(R.id.progress);
+            myClass.mProgressBar.setMax(100);
             myClass.mProgressText = (TextView)view.findViewById(R.id.progress_text);
             myClass.mResultImage = (ImageView)view.findViewById(R.id.result);
 
@@ -104,7 +165,10 @@ public class SendListAdapter extends BaseAdapter {
             myClass = (ViewClass)view.getTag();
         }
 
-        MyAppInfo theInfo = mListSendItems.get(position);
+        MyAppInfo theInfo;
+        synchronized (mListSendItems) {
+            theInfo = mListSendItems.get(position);
+        }
         showItemInfos(theInfo, myClass);
 
         return view;
@@ -116,16 +180,49 @@ public class SendListAdapter extends BaseAdapter {
 
         if (theInfo.mTransState == TransState.READY) {
             myClass.mProgressLinearLayout.setVisibility(View.GONE);
-            myClass.mResultImage.setVisibility(View.INVISIBLE);
+            // myClass.mResultImage.setVisibility(View.INVISIBLE);
+            myClass.mResultImage.setVisibility(View.GONE);
+
+        } else if (theInfo.mTransState == TransState.BEGIN) {
+            myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
+            // myClass.mResultImage.setVisibility(View.INVISIBLE);
+            myClass.mResultImage.setVisibility(View.GONE);
+            int progress = 0;
+            myClass.mProgressBar.setProgress(progress);
+            myClass.mProgressText.setText(progress+"%");
+
         } else if (theInfo.mTransState == TransState.TRANSING) {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            myClass.mResultImage.setVisibility(View.INVISIBLE);
+            // myClass.mResultImage.setVisibility(View.INVISIBLE);
+            myClass.mResultImage.setVisibility(View.GONE);
+            int progress = (int)(theInfo.mPos*100/theInfo.mTotal);
+            myClass.mProgressBar.setProgress(progress);
+            myClass.mProgressText.setText(progress+"%");
+
+        } else if (theInfo.mTransState == TransState.OK) {
+            myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
+            // myClass.mResultImage.setVisibility(View.VISIBLE);
+            myClass.mProgressBar.setProgress(100);
+            myClass.mProgressText.setText("100%");
+
         } else {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            myClass.mResultImage.setVisibility(View.VISIBLE);
+            // myClass.mResultImage.setVisibility(View.VISIBLE);
+
         }
     }
-    
+
+    private MyAppInfo getItemById(int id) {
+        synchronized (mListSendItems) {
+            for (MyAppInfo info: mListSendItems) {
+                if (info.mFileIDForListener == id) {
+                    return info;
+                }
+            }
+        }
+        return null;
+    }
+
     private static class ViewClass {
         public ImageView mIcon;
         public TextView mAppName;
@@ -138,14 +235,21 @@ public class SendListAdapter extends BaseAdapter {
 
     private enum TransState {
         READY,
+        BEGIN,
         TRANSING,
-        DONE,
+        OK,
+        FAILED,
+        TIMEOUT,
     }
 
     private static class MyAppInfo {
         public String mDisplayName;
         public String mFullPath;
         public String mFileSize;
+        public int mFileIDForListener;
+
         public TransState mTransState;
+        public long mPos;
+        public long mTotal;
     }
 }

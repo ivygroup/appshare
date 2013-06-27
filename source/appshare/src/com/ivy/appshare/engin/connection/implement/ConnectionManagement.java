@@ -649,6 +649,9 @@ public class ConnectionManagement implements WifiStateChangedListener {
     }
     
     private void dispatchOnHotspotIPAvailable(InetAddress addr){
+        if (addr == null) {
+            return;
+        }
         Log.d(TAG, "WifiHotspotIPAvailable:" + addr.getHostAddress());
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onIvyHotspotIPAvailable(addr);

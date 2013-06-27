@@ -14,6 +14,7 @@
 	<string name="change_name">修改名称</string>
     <string name="name_empty">用户名不能为空！</string>
 
+    <string name="waittosend">等待好友连接...</string>
 	<string name="sendto">发送给</string>
 
 </resources>

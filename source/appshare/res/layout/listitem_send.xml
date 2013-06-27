@@ -50,11 +50,12 @@
 	        <TextView android:id="@+id/size"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="6dp"
 	            android:textColor="#FF808080"
 	            android:textIsSelectable="false"
 	            android:textSize="13sp"
-	            android:gravity="right|bottom"
-	            android:layout_gravity="right|bottom" />
+	            android:gravity="right|center"
+	            android:layout_gravity="right|center" />
 	    </LinearLayout>
 	    
         <LinearLayout
@@ -78,7 +79,7 @@
                 android:layout_marginLeft="3dp"
                 android:textSize="@dimen/list_secondray_textsize"
                 android:textColor="@color/list_secondray"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </LinearLayout>
     </LinearLayout>
 
