@@ -1,5 +1,6 @@
 package com.ivy.appshare.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -114,5 +115,16 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 			}
 		}
 		return nCount;
+	}
+
+	public ArrayList<String> getSelectItems() {
+	    ArrayList<String> items = new ArrayList<String>();
+	    int nSize = mlistAppInfo.size();
+	    for (AppsInfo info: mlistAppInfo) {
+	        if (info.isSelected) {
+	            items.add(info.sourceDir);
+	        }
+	    }
+        return items;
 	}
 }

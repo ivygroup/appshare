@@ -12,5 +12,5 @@
 	<string name="change_name">Change name</string>
 	<string name="name_empty">A user name can not be a null one！</string>
 
-	<string name="push">Push</string>
+	<string name="sendto">to</string>
 </resources>
