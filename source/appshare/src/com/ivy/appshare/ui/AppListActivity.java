@@ -140,8 +140,9 @@ public class AppListActivity extends IvyActivityBase implements
 		for (int i = 0; i < mFileSharedNum; i++) {
 			mFileShareSSID = mIvyConnectionManager.getScanResult().get(i).getSSID();
 			mFileShareName = mIvyConnectionManager.getScanResult().get(i).getFriendlyName();
+			int count = mIvyConnectionManager.getScanResult().get(i).getShareAppCount();
 			String fileShareList = getResources().getString(
-					R.string.share_list, mFileShareName, "n");
+					R.string.share_list, mFileShareName, count);
 			mShareData.add(fileShareList);
 		}
 

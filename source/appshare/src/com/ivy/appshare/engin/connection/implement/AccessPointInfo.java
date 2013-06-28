@@ -19,6 +19,7 @@ public class AccessPointInfo{
     public String mMacAddress;
     public int mNetworkId;
     public String mFriendlyName;
+    public int mShareAppCount;
     private boolean mIsIvyWifiDirectDevice;
     public int mSecurity;
     public int mSignalLevel;
@@ -62,9 +63,12 @@ public class AccessPointInfo{
         mSecurity = getSecurity(result);
         mSignalLevel = result.level;
         try{
-            mFriendlyName = mSSID.substring(0, mSSID.lastIndexOf("-"));
+            String[] arr = mSSID.split("-", 3);
+            mFriendlyName = arr[2];
+            mShareAppCount = Integer.valueOf(arr[1]);
         } catch(IndexOutOfBoundsException e){
             mFriendlyName = null;
+            mShareAppCount = 0;
         }
         mType = AccessPointType.IVY_HOTSPOT;
     }

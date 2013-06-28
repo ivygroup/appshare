@@ -125,6 +125,7 @@ public class IvyConnectionManager implements ConnectionStateListener {
         info.mSSID = mConnectionManagement.getConnectionInfo().getSSID();
         info.mFriendlyName = mConnectionManagement.getConnectionInfo().getFriendlyName();
         info.mHotspotPassword = mConnectionManagement.getConnectionInfo().getIvyHotspotPassword();
+        info.mShareAppCount = mConnectionManagement.getConnectionInfo().mShareAppCount;
 
         return info; 
     }
@@ -153,6 +154,13 @@ public class IvyConnectionManager implements ConnectionStateListener {
             return false;
         }
         return mConnectionManagement.createHotspot();
+    }
+
+    public boolean createHotspot(int shareAppCount) {
+        if (mConnectionManagement == null) {
+            return false;
+        }
+        return mConnectionManagement.createHotspot(shareAppCount);
     }
 
     public boolean disableHotspot() {
@@ -429,6 +437,7 @@ public class IvyConnectionManager implements ConnectionStateListener {
                 apInfo.mSSID = info.getSSID();
                 apInfo.mFriendlyName = info.getFriendlyName();
                 apInfo.mHotspotPassword = info.getIvyHotspotPassword();
+                apInfo.mShareAppCount = info.mShareAppCount;
                 resultApInfos.add(apInfo);
             }
         }
@@ -443,6 +452,7 @@ public class IvyConnectionManager implements ConnectionStateListener {
         apInfo.mSSID = info.getSSID();
         apInfo.mFriendlyName = info.getFriendlyName();
         apInfo.mHotspotPassword = info.getIvyHotspotPassword();
+        apInfo.mShareAppCount = info.mShareAppCount;
         resultApInfos.add(apInfo);
     }
 

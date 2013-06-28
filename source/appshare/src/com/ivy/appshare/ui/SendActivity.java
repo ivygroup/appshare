@@ -1,7 +1,5 @@
 package com.ivy.appshare.ui;
 
-import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,10 +19,10 @@ import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.control.PersonManager;
-import com.ivy.appshare.engin.im.Im.FileType;
-import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.engin.control.TranslateFileControl;
 import com.ivy.appshare.engin.data.Table_Message;
+import com.ivy.appshare.engin.im.Im.FileType;
+import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.utils.IvyActivityBase;
 
 public class SendActivity extends IvyActivityBase implements OnClickListener, TranslateFileControl.TransProcessListener {
@@ -61,9 +59,6 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_send);
-
-        // get the data from intent.
-        Intent intent = getIntent();
 
         // set the action bar.
         View actionbar = (View) findViewById(R.id.layout_title);
@@ -148,7 +143,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         super.onResume();
         registerMyReceivers();
         if (mIvyConnectionManager != null) {
-            mIvyConnectionManager.createHotspot();
+            mIvyConnectionManager.createHotspot(NeedSendAppList.getInstance().mListAppInfo.size());
         }
     }
 

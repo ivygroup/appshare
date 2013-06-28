@@ -36,6 +36,10 @@ import com.ivy.appshare.engin.control.LocalSetting;
 public class ConnectionManagement implements WifiStateChangedListener {
 
     private final static String TAG = "ConnectionManagement";
+    
+    private final static String SSID_PREFIX = "ivyappshare";
+    private final static String SSID_PASSWORD = "ivyappshare";
+    
     private IntentFilter mIntentFilter;
     private BroadcastReceiver mReceiver;
     private Context mContext;
@@ -262,7 +266,27 @@ public class ConnectionManagement implements WifiStateChangedListener {
         
         return true;
     }
-    
+
+    public boolean createHotspot(int shareCount) {
+        mNickName = mLocalSetting.getMySelf().mNickName;
+        Log.d(TAG, "createHotspot for " + mNickName);
+
+        if ((mWifiApState == WifiManagerHiddenAPI.WifiHiddenAPI.WIFI_AP_STATE_ENABLED)
+                || (mWifiApState == WifiManagerHiddenAPI.WifiHiddenAPI.WIFI_AP_STATE_ENABLING)){
+            Log.d(TAG, "Do NOT need to create hotspot. State: " + mWifiApState);
+            return true;
+        }
+        
+        mIvyHotspotWifiConfigation = new WifiConfiguration();
+        if (false == generateIvyHotspotWifiConfigation2(shareCount)){
+            return false;
+        }
+        
+        setSoftapEnabled(true);
+        
+        return true;        
+    }
+
     public boolean disableHotspot(){
         Log.d(TAG, "disableHotspot");
         if ((mWifiApState == WifiManagerHiddenAPI.WifiHiddenAPI.WIFI_AP_STATE_DISABLED)
@@ -698,17 +722,15 @@ public class ConnectionManagement implements WifiStateChangedListener {
         return false;
     }
     
-    public final static int MAX_NAME_LENGTH = 15;
-
-	private String getPrefixSSID() {
+	private String getPrefixSSID(int maxNameLength) {
 		int totalNum = 0;
 		String prefixName = "";
 
-		for (int i = 0; totalNum < MAX_NAME_LENGTH && i < mNickName.length(); i ++) {
+		for (int i = 0; totalNum < maxNameLength && i < mNickName.length(); i ++) {
 			String tempStr = mNickName.substring(i, i + 1);
 			int num = tempStr.getBytes().length;
 
-			if (totalNum + num > MAX_NAME_LENGTH) {
+			if (totalNum + num > maxNameLength) {
 				break;
 			}
 
@@ -740,7 +762,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
         long pass = (l + 10000000) * 3 ;
 
         //TODO: Adding battery info later
-        mIvyHotspotWifiConfigation.SSID = getPrefixSSID() + "-" + Long.toString(ssid);// + String.format("%03d", mBatteryLevel);
+        mIvyHotspotWifiConfigation.SSID = getPrefixSSID(15) + "-" + Long.toString(ssid);// + String.format("%03d", mBatteryLevel);
         mIvyHotspotWifiConfigation.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
         mIvyHotspotWifiConfigation.allowedKeyManagement.clear();
         if (sSDKVersion >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
@@ -756,12 +778,49 @@ public class ConnectionManagement implements WifiStateChangedListener {
         return true;
     }
     
+    private boolean generateIvyHotspotWifiConfigation2(int shareCount) {
+        if (mMac == null){
+            //Try to get device MAC address
+            mMac = mWifiManager.getConnectionInfo().getMacAddress();
+            if (mMac == null){
+                //Only find one case that we can't get mac address.
+                //After phone[bkb] booted, if wifi, wifi-hotspot are all disabled,
+                //we can't get mac. If this happens, we will try enable
+                //wlan at first, so do nothing here.
+                return false;
+            }
+        }
+        mIvyHotspotWifiConfigation.BSSID = mMac;
+
+        StringBuilder mySSID = new StringBuilder();
+        mySSID.append(SSID_PREFIX);
+        mySSID.append("-");
+        mySSID.append(shareCount);
+        mySSID.append("-");
+        mySSID.append(getPrefixSSID(30 - mySSID.length()));
+        mIvyHotspotWifiConfigation.SSID = mySSID.toString();
+        mIvyHotspotWifiConfigation.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+        mIvyHotspotWifiConfigation.allowedKeyManagement.clear();
+        if (sSDKVersion >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+            mIvyHotspotWifiConfigation.allowedKeyManagement.set(4/*KeyMgmt.WPA_PSK*/);
+        } else {
+            mIvyHotspotWifiConfigation.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        }
+        mIvyHotspotWifiConfigation.preSharedKey= SSID_PASSWORD;
+        
+        Log.d(TAG, "Hotspot SSID: " + mIvyHotspotWifiConfigation.SSID
+                    + ", Password: " + mIvyHotspotWifiConfigation.preSharedKey);
+        
+        return true;
+    }
+
     private void generateIvyNetworkWifiConfiguration(AccessPointInfo selectedAp){
         String s = selectedAp.mBSSID.replaceAll(":", "");
         Long l = Long.parseLong(s, 16);
         long pwd = ((l + (10000000))) * 3 ;
         
-        mIvyNetworkWifiConfiguration.preSharedKey = '"' + Long.toString(pwd) + '"';
+        // mIvyNetworkWifiConfiguration.preSharedKey = '"' + Long.toString(pwd) + '"';
+        mIvyNetworkWifiConfiguration.preSharedKey = '"' + SSID_PASSWORD + '"';
         mIvyNetworkWifiConfiguration.allowedKeyManagement.set(KeyMgmt.WPA_PSK);
 
         mIvyNetworkWifiConfiguration.SSID = '"' + selectedAp.mSSID + '"';
@@ -805,6 +864,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
         return isIvyHotspot(ssid, bssid);
     }
     
+    /*
     private boolean isIvyHotspot(String ssid, String bssid){
         if (ssidIsInIvyRoom(ssid)) {
             return true;
@@ -834,6 +894,30 @@ public class ConnectionManagement implements WifiStateChangedListener {
             return true;
         }
         
+        return false;
+    }
+    */
+    
+    private boolean isIvyHotspot(String ssid, String bssid) {
+        if (ssidIsInIvyRoom(ssid)) {
+            return true;
+        }
+
+        if ((ssid == null) 
+                || (ssid.length() == 0) 
+                || (bssid == null) 
+                || (bssid.length() == 0)){
+            return false;
+        }
+        
+        String[] arraySSID = ssid.split("-", 3);
+        if (arraySSID.length < 3) {
+            return false;
+        }
+        if (arraySSID[0].equals(SSID_PREFIX)) {
+            return true;
+        }
+
         return false;
     }
 
