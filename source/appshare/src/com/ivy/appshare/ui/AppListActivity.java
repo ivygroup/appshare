@@ -92,7 +92,7 @@ public class AppListActivity extends IvyActivityBase implements
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					final int arg2, long arg3) {
-				CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
+				/*CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
 				.setTitle(R.string.wait_receive_dl_title)
 				.setMessage(R.string.wait_receive_dl_message)
 				.setIcon(android.R.drawable.ic_dialog_info)
@@ -108,7 +108,11 @@ public class AppListActivity extends IvyActivityBase implements
 
 				})
 				.setNegativeButton(R.string.cancel, null)
-				.show().setCanceledOnTouchOutside(false);
+				.show().setCanceledOnTouchOutside(false);*/
+				Intent intent = new Intent(AppListActivity.this,ReceiveActivity.class);
+				intent.putExtra("ssid", mFileShareSSID.get(arg2));
+				intent.putExtra("nickName", mFileShareName.get(arg2));
+				startActivity(intent);
 			}
 		});
 
