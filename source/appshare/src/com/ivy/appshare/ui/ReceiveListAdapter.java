@@ -29,15 +29,16 @@ public class ReceiveListAdapter extends BaseAdapter implements OnClickListener {
         mListReceiveItems = new ArrayList<ReceiveListAdapter.MyAppInfo>();
     }
 
-    public void changeTransState_Begin(Person person, int fileID) {
+    public void changeTransState_Begin(Person person, int fileID, String fileFullPath) {
         MyAppInfo info = new MyAppInfo();
-
-        if (info.mTransState != TransState.READY) {
-            return;
-        }
-        info.mTransState = TransState.BEGIN;
+        info.mFileIDForListener = fileID;
+        info.mFullPath = fileFullPath;
+        info.mDisplayName = fileFullPath.substring(fileFullPath.lastIndexOf("/")+1);
         info.mPos = 0;
         info.mTotal = 100;
+        info.mTransState = TransState.BEGIN;
+
+        mListReceiveItems.add(info);
     }
 
     public void changeTransState_Process(Person person, int fileID, long pos, long total) {
@@ -116,7 +117,7 @@ public class ReceiveListAdapter extends BaseAdapter implements OnClickListener {
             myClass.mProgressBar = (ProgressBar)view.findViewById(R.id.progress);
             myClass.mProgressBar.setMax(100);
             myClass.mProgressText = (TextView)view.findViewById(R.id.progress_text);
-//            myClass.mResultImage = (ImageView)view.findViewById(R.id.result);
+            myClass.mResultImage = (ImageView)view.findViewById(R.id.result);
 
             view.setTag(myClass);
         } else {

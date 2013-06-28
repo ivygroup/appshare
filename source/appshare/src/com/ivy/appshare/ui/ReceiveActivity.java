@@ -109,13 +109,17 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
 
                     case MESSAGE_FILEPROCESS_STATE: {
                         Intent intent = (Intent)msg.obj;
+                        int messageType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_TYPE, 0);
                         int id = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_ID, 0);
                         int messageState = intent.getIntExtra(IvyMessages.PARAMETER_MESSGAE_STATE, 0);
+                        int fileType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_FILE_TYPE, 0);
+                        String filename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
+                        boolean isMeSay = intent.getBooleanExtra(IvyMessages.PARAMETER_MESSAGE_SELF, true);
                         String personKey = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_PERSON);
                         Person person = PersonManager.getInstance().getPerson(personKey);
 
                         if (messageState == Table_Message.STATE_BEGIN) {
-                            mAdapter.changeTransState_Begin(person, id);
+                            mAdapter.changeTransState_Begin(person, id, filename);
                         } else if (messageState == Table_Message.STATE_OK) {
                             mAdapter.changeTransState_OK(person, id);
                         } else if (messageState == Table_Message.STATE_FAILED) {
@@ -265,17 +269,18 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     private class MessageBroadCastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             int messageType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_TYPE, 0);
+            int id = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_ID, 0);
+            int messageState = intent.getIntExtra(IvyMessages.PARAMETER_MESSGAE_STATE, 0);
             int fileType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_FILE_TYPE, 0);
+            String finename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
             boolean isMeSay = intent.getBooleanExtra(IvyMessages.PARAMETER_MESSAGE_SELF, true);
+            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_PERSON);
+            Person person = PersonManager.getInstance().getPerson(personKey);
 
             if (fileType != FileType.FileType_App.ordinal()) {
                 return;
             }
 
-            if (messageType != IvyMessages.VALUE_MESSAGETYPE_UPDATE) {
-                return;
-            }
-            
             if (isMeSay) {
                 return;
             }
