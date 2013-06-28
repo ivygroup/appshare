@@ -1,8 +1,10 @@
 package com.ivy.appshare.ui;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.ivy.appshare.engin.control.TranslateFileControl;
 import com.ivy.appshare.engin.data.Table_Message;
 import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.engin.im.Person;
+import com.ivy.appshare.utils.CommonUtils;
 import com.ivy.appshare.utils.IvyActivityBase;
 
 public class SendActivity extends IvyActivityBase implements OnClickListener, TranslateFileControl.TransProcessListener {
@@ -259,15 +262,31 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             }
 
             int type = intent.getIntExtra(IvyMessages.PARAMETER_PERSON_TYPE, 0);
-            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_PERSON_VALUE);
+            
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
-                Person person = PersonManager.getInstance().getPerson(personKey);
-                // TODO , ask user if send to this person.
-                switchBarAndToPerson(false);
-                mCenterTextView.setText(getResources().getString(R.string.sendto));
-                mRightTextView.setText(person.mNickName);
-                mAdapter.beginTranslate(mImManager, person);
+                askIfSendToThisPerson(intent);
             }
+        }
+
+        private void askIfSendToThisPerson(Intent intent) {
+            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_PERSON_VALUE);
+            final Person person = PersonManager.getInstance().getPerson(personKey);
+            
+            Dialog alertDialog = CommonUtils.getMyAlertDialogBuilder(SendActivity.this)
+                    .setTitle(R.string.requestsendtitle)
+                    .setMessage(getResources().getString(R.string.requestsendmessage, person.mNickName))
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,int which) {
+                                    switchBarAndToPerson(false);
+                                    mCenterTextView.setText(getResources().getString(R.string.sendto));
+                                    mRightTextView.setText(person.mNickName);
+                                    mAdapter.beginTranslate(mImManager, person);
+                                }
+                            }).setNegativeButton(R.string.cancel, null).create();
+            alertDialog.show();
         }
     }
 

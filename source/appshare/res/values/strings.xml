@@ -17,4 +17,7 @@
 
 	<string name="waittosend">wait your friends ...</string>
 	<string name="sendto">to</string>
+
+	<string name="requestsendtitle">request send</string>
+	<string name="requestsendmessage">Are you sure share files to %1$s</string>
 </resources>
