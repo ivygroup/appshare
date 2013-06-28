@@ -261,7 +261,6 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
                 //switchBarAndToPerson(false);
                 mCenterTextView.setText(getResources().getString(R.string.from));
                 mRightTextView.setText(person.mNickName);
-                
             }
         }
     }

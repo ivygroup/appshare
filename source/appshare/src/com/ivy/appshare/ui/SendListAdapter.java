@@ -60,6 +60,7 @@ public class SendListAdapter extends BaseAdapter {
         mToPerson = toPerson;
         synchronized (mListSendItems) {
             for (MyAppInfo info: mListSendItems) {
+                info.mTransState = TransState.READY;
                 int id = mImManager.sendFile(mToPerson, null, info.mAppsInfo.sourceDir, FileType.FileType_App);
                 info.mFileIDForListener = id;
             }    
