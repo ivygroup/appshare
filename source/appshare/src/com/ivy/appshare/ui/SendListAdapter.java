@@ -27,15 +27,14 @@ public class SendListAdapter extends BaseAdapter {
     Person mToPerson;
 
 
-    public SendListAdapter(Context context, List<String> sendApps) {
+    public SendListAdapter(Context context) {
         mContext = context;
         mListSendItems = new ArrayList<SendListAdapter.MyAppInfo>();
-        for (String path: sendApps) {
+        for (AppsInfo appinfo: NeedSendAppList.getInstance().mListAppInfo) {
             MyAppInfo info = new MyAppInfo();
-            info.mFullPath = path;
-            info.mDisplayName = path.substring(path.lastIndexOf("/") + 1, path.length());
+            info.mAppsInfo = appinfo;
             {
-                File file = new File(path);
+                File file = new File(info.mAppsInfo.sourceDir);
                 DecimalFormat df= new DecimalFormat("#.##");   
                 if (file.exists()) {
                     long filesize = file.length();
@@ -61,7 +60,7 @@ public class SendListAdapter extends BaseAdapter {
         mToPerson = toPerson;
         synchronized (mListSendItems) {
             for (MyAppInfo info: mListSendItems) {
-                int id = mImManager.sendFile(mToPerson, null, info.mFullPath, FileType.FileType_App);
+                int id = mImManager.sendFile(mToPerson, null, info.mAppsInfo.sourceDir, FileType.FileType_App);
                 info.mFileIDForListener = id;
             }    
         }
@@ -175,8 +174,9 @@ public class SendListAdapter extends BaseAdapter {
     }
 
     private void showItemInfos(MyAppInfo theInfo, ViewClass myClass) {
-        myClass.mAppName.setText(theInfo.mDisplayName);
+        myClass.mAppName.setText(theInfo.mAppsInfo.appLabel);
         myClass.mFileSize.setText(theInfo.mFileSize);
+        myClass.mIcon.setImageDrawable(theInfo.mAppsInfo.appIcon);
 
         if (theInfo.mTransState == TransState.READY) {
             myClass.mProgressLinearLayout.setVisibility(View.GONE);
@@ -243,8 +243,9 @@ public class SendListAdapter extends BaseAdapter {
     }
 
     private static class MyAppInfo {
-        public String mDisplayName;
-        public String mFullPath;
+        public AppsInfo mAppsInfo;
+        // public String mDisplayName;
+        // public String mFullPath;
         public String mFileSize;
         public int mFileIDForListener;
 

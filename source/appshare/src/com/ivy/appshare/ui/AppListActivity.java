@@ -240,9 +240,10 @@ public class AppListActivity extends IvyActivityBase implements
 		case R.id.btn_right:
 		{
 		    if (mAppAdapter.getSelectItemCount() > 0) {
+		        mAppAdapter.getSelectItems(NeedSendAppList.getInstance().mListAppInfo);
+
 		        Intent intent = new Intent();
 		        intent.setClass(this, SendActivity.class);
-		        intent.putStringArrayListExtra("items", mAppAdapter.getSelectItems());
 		        startActivity(intent);
 		    } else {
 		        // TODO:  Toast.

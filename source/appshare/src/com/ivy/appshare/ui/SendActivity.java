@@ -40,11 +40,6 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private static final int MESSAGE_NETWORK_CLEAR_IVYROOM= 12;
     private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P= 13;
 
-    /*private static final int MESSAGE_FILEPROCESS_BEGIN = 20;
-    private static final int MESSAGE_FILEPROCESS_CHANGED = 21;
-    private static final int MESSAGE_FILEPROCESS_OK = 22;
-    private static final int MESSAGE_FILEPROCESS_FAILED = 23;
-    private static final int MESSAGE_FILEPROCESS_TIMEOUT = 24;*/
     private static final int MESSAGE_FILEPROCESS_STATE = 20;
     private static final int MESSAGE_FILEPROCESS_CHANGED = 21;
 
@@ -55,8 +50,6 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private View mSwitchBar;
     private TextView mCenterTextView;
     private TextView mRightTextView;
-
-    private List<String> mListSendItems;
 
 
     private PersonBroadCastReceiver mPersonReceiver;
@@ -71,7 +64,6 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 
         // get the data from intent.
         Intent intent = getIntent();
-        mListSendItems = intent.getStringArrayListExtra("items");
 
         // set the action bar.
         View actionbar = (View) findViewById(R.id.layout_title);
@@ -87,7 +79,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 
         // init listview and adapter.
         mListView = (ListView)findViewById(R.id.list);
-        mAdapter = new SendListAdapter(this, mListSendItems);
+        mAdapter = new SendListAdapter(this);
         mListView.setAdapter(mAdapter);
 
 

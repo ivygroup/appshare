@@ -117,14 +117,12 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 		return nCount;
 	}
 
-	public ArrayList<String> getSelectItems() {
-	    ArrayList<String> items = new ArrayList<String>();
-	    int nSize = mlistAppInfo.size();
+	public void getSelectItems(List<AppsInfo> result) {
+	    result.clear();
 	    for (AppsInfo info: mlistAppInfo) {
 	        if (info.isSelected) {
-	            items.add(info.sourceDir);
+	            result.add(info);
 	        }
 	    }
-        return items;
 	}
 }
