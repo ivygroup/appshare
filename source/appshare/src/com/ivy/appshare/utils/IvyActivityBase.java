@@ -59,6 +59,7 @@ public class IvyActivityBase extends Activity implements ServiceConnection {
     public void onServiceConnected(ComponentName name, IBinder service) {
         mIvyService = ((IvyService.LocalBinder)service).getService();
         mIvyConnectionManager = mIvyService.getIvyConnectionManager();
+        mIvyConnectionManager.enableWifi();
         mImManager = mIvyService.getImManager();
         mImManager.upLine();
     }
