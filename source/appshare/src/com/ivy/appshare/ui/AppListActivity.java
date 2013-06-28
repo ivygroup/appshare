@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -141,6 +143,19 @@ public class AppListActivity extends IvyActivityBase implements
 			}
 		};
 
+	}
+
+	@Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+	    super.onServiceConnected(name, service);
+	    mIvyConnectionManager.disableHotspot();
+	    mIvyConnectionManager.enableWifi();
+	}
+
+	@Override
+    public void onServiceDisconnected(ComponentName name) {
+	    mIvyConnectionManager.disableHotspot();
+	    super.onServiceDisconnected(name);
 	}
 
 	private void updateList() {
