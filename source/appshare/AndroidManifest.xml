@@ -44,6 +44,12 @@
             android:configChanges="orientation|screenSize|keyboardHidden" >
         </activity>
 
+        <activity
+            android:name="com.ivy.appshare.ui.ReceiveActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+
         <service
             android:name="com.ivy.appshare.engin.IvyService"
             android:exported="false" >

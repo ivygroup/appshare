@@ -45,8 +45,8 @@ public class AppListActivity extends IvyActivityBase implements
 	private LocalSetting mLocalSetting;
 	private Handler mHandler;
 	private int mFileSharedNum;
-	private String mFileShareSSID;
-	private String mFileShareName;
+	private List<String> mFileShareSSID = new ArrayList<String>();
+	private List<String> mFileShareName = new ArrayList<String>();
 	private List<String> mShareData;
 	private ArrayAdapter mAdapter;
 
@@ -91,19 +91,24 @@ public class AppListActivity extends IvyActivityBase implements
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				mIvyConnectionManager.connectIvyNetwork(mFileShareSSID);
+					final int arg2, long arg3) {
 				CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
 				.setTitle(R.string.wait_receive_dl_title)
 				.setMessage(R.string.wait_receive_dl_message)
 				.setIcon(android.R.drawable.ic_dialog_info)
-				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,int which) {
-								//Opt out
-								mIvyConnectionManager.disconnectFromIvyNetwork();
-							}
-				}).show().setCanceledOnTouchOutside(false);
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(AppListActivity.this,ReceiveActivity.class);
+						intent.putExtra("ssid", mFileShareSSID.get(arg2));
+						intent.putExtra("nickName", mFileShareName.get(arg2));
+						startActivity(intent);
+					}
+
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show().setCanceledOnTouchOutside(false);
 			}
 		});
 
@@ -136,14 +141,17 @@ public class AppListActivity extends IvyActivityBase implements
 
 	private void updateList() {
 		mShareData.clear();
-
+		mFileShareSSID.clear();
+		mFileShareName.clear();
 		for (int i = 0; i < mFileSharedNum; i++) {
-			mFileShareSSID = mIvyConnectionManager.getScanResult().get(i).getSSID();
-			mFileShareName = mIvyConnectionManager.getScanResult().get(i).getFriendlyName();
 			int count = mIvyConnectionManager.getScanResult().get(i).getShareAppCount();
+			String scanSSID = mIvyConnectionManager.getScanResult().get(i).getSSID();
+			String scanName = mIvyConnectionManager.getScanResult().get(i).getFriendlyName();
 			String fileShareList = getResources().getString(
-					R.string.share_list, mFileShareName, count);
+					R.string.share_list, scanName, "n");
 			mShareData.add(fileShareList);
+			mFileShareSSID.add(scanSSID);
+			mFileShareName.add(scanName);
 		}
 
 		mAdapter.notifyDataSetChanged();
