@@ -148,7 +148,7 @@ public class AppListActivity extends IvyActivityBase implements
 			String scanSSID = mIvyConnectionManager.getScanResult().get(i).getSSID();
 			String scanName = mIvyConnectionManager.getScanResult().get(i).getFriendlyName();
 			String fileShareList = getResources().getString(
-					R.string.share_list, scanName, "n");
+					R.string.share_list, scanName, count);
 			mShareData.add(fileShareList);
 			mFileShareSSID.add(scanSSID);
 			mFileShareName.add(scanName);
