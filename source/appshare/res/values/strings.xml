@@ -21,4 +21,6 @@
 	<string name="requestsendtitle">request send</string>
 	<string name="requestsendmessage">Are you sure share files to %1$s</string>
 	<string name="from">receive from</string>
+
+   <string name="waittoreceive">waiting ...</string>
 </resources>

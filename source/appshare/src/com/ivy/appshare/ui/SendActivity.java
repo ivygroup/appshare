@@ -51,6 +51,8 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private View mSwitchBar;
     private TextView mCenterTextView;
     private TextView mRightTextView;
+    
+    private boolean mIsHotspotCreated = false;
 
 
     private PersonBroadCastReceiver mPersonReceiver;
@@ -80,6 +82,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         mAdapter = new SendListAdapter(this);
         mListView.setAdapter(mAdapter);
 
+        mIsHotspotCreated = false;
 
         // handler for messages
         mHandler = new Handler(this.getMainLooper()) {
@@ -95,6 +98,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                             int type = msg.arg1;
                             int state = msg.arg2;
 
+                            if (state == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
+                            	mIsHotspotCreated = true;
+                            }
                             if (ConnectionState.isConnected(state)) {
                                 doUpLine();
                             } else {
@@ -259,6 +265,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         {
             if (mImManager == null) {
                 return;
+            }
+            if (!mIsHotspotCreated) {
+            	return;
             }
 
             int type = intent.getIntExtra(IvyMessages.PARAMETER_PERSON_TYPE, 0);

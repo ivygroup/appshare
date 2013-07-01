@@ -59,6 +59,8 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     private MessageBroadCastReceiver mMessageReceiver;
     private NetworkReceiver mNetworkReceiver;
 
+    private boolean mIsNetworkConnected = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,17 +78,19 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
         textLeft.setText(LocalSetting.getInstance().getMySelf().mNickName);
         mCenterTextView = ((TextView) actionbar.findViewById(R.id.center_text_info));
         mCenterTextView.setVisibility(View.VISIBLE);
-        mCenterTextView.setText(getResources().getString(R.string.from));
+        mCenterTextView.setText(getResources().getString(R.string.waittoreceive));
         mSwitchBar = actionbar.findViewById(R.id.switching_bar);
         mRightTextView = ((TextView) actionbar.findViewById(R.id.right_text_info));
         mRightTextView.setVisibility(View.VISIBLE);
         mRightTextView.setText(intent.getStringExtra("nickName"));
-        //switchBarAndToPerson(true);
+        switchBarAndToPerson(true);
 
         // init listview and adapter.
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new ReceiveListAdapter(this);
         mListView.setAdapter(mAdapter);
+
+        mIsNetworkConnected = false;
 
         // handler for messages
         mHandler = new Handler(this.getMainLooper()) {
@@ -103,6 +107,9 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
                             int state = msg.arg2;
 
                             if (ConnectionState.isConnected(state)) {
+                                if (state == ConnectionState.CONNECTION_STATE_WIFI_IVY_CONNECTED) {
+                                	mIsNetworkConnected = true;
+                                }
                                 doUpLine();
                             } else {
                                 doDownLine();
@@ -151,6 +158,16 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     public void onServiceConnected(ComponentName name, IBinder service) {
         super.onServiceConnected(name, service);
         mHandler.sendEmptyMessage(MESSAGE_SERVICE_CONNECTED);
+    }
+
+    private void switchBarAndToPerson(boolean isSwitch) {
+        if (isSwitch) {
+            mSwitchBar.setVisibility(View.VISIBLE);
+            mRightTextView.setVisibility(View.GONE);
+        } else {
+            mSwitchBar.setVisibility(View.GONE);
+            mRightTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -256,13 +273,16 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
             if (mImManager == null) {
                 return;
             }
+            if (!mIsNetworkConnected) {
+            	return;
+            }
 
             int type = intent.getIntExtra(IvyMessages.PARAMETER_PERSON_TYPE, 0);
             String personKey = intent.getStringExtra(IvyMessages.PARAMETER_PERSON_VALUE);
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
                 Person person = PersonManager.getInstance().getPerson(personKey);
                 // TODO , ask user if send to this person.
-                //switchBarAndToPerson(false);
+                switchBarAndToPerson(false);
                 mCenterTextView.setText(getResources().getString(R.string.from));
                 mRightTextView.setText(person.mNickName);
             }

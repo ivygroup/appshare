@@ -21,4 +21,5 @@
 	<string name="requestsendtitle">请求发送</string>
 	<string name="requestsendmessage">%1$s请求你的共享文件, 给他吗?</string>
 
+	<string name="waittoreceive">等待发送 ...</string>
 </resources>
