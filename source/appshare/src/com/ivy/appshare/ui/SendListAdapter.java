@@ -42,10 +42,10 @@ public class SendListAdapter extends BaseAdapter {
                         info.mFileSize = filesize + " byte";
                     } else if (filesize < 1024 *1024) {
                         double tmp = (double)filesize/1024;
-                        info.mFileSize = df.format(tmp) + " k";
+                        info.mFileSize = df.format(tmp) + " KB";
                     } else {
                         double tmp = (double)filesize/1024/1024 ;
-                        info.mFileSize = df.format(tmp) + " m";
+                        info.mFileSize = df.format(tmp) + " MB";
                     }
                 }
             }

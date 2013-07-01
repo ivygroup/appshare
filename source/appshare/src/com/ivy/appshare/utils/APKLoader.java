@@ -92,6 +92,16 @@ public class APKLoader {
         mTask.execute(0);
     }
 
+    public void reLoad() {
+    	mMapPackageApp.clear();
+    	mMapAppPackageVersion.clear();
+    	mListAppInfo.clear();
+    	unInit();
+
+    	mTask = new SearchAsyncTask();
+    	mTask.execute(0);
+    }
+
     public void unInit() {
 		if (mImageLoader != null) {
 			mImageLoader.unInit();

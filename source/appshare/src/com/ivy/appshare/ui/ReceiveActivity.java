@@ -2,6 +2,7 @@ package com.ivy.appshare.ui;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,10 +12,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.connection.ConnectionState;
@@ -122,6 +125,7 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
                             mAdapter.changeTransState_Begin(person, id, filename);
                         } else if (messageState == Table_Message.STATE_OK) {
                             mAdapter.changeTransState_OK(person, id);
+                            ReceiveActivity.this.setResult(RESULT_OK);
                         } else if (messageState == Table_Message.STATE_FAILED) {
                             mAdapter.changeTransState_Failed(person, id);
                         } else if (messageState == Table_Message.STATE_TIMEOUT) {
@@ -329,5 +333,4 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
 			FileType fileType, long pos, long total) {
 		
 	}
-    
 }

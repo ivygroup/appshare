@@ -3,6 +3,7 @@ package com.ivy.appshare.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -57,6 +58,9 @@ public class AppListActivity extends IvyActivityBase implements
 	private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P = 2;
 	private static final int MESSAGE_NETWORK_STATE_CHANGED = 3;
 	private NetworkReceiver mNetworkReceiver = null;
+	
+	private static final int REQUEST_RECEIVE_APP = 0;
+	public static final int RECEIVE_APP_YES = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +118,7 @@ public class AppListActivity extends IvyActivityBase implements
 				Intent intent = new Intent(AppListActivity.this,ReceiveActivity.class);
 				intent.putExtra("ssid", mFileShareSSID.get(arg2));
 				intent.putExtra("nickName", mFileShareName.get(arg2));
-				startActivity(intent);
+				startActivityForResult(intent, REQUEST_RECEIVE_APP);
 			}
 		});
 
@@ -281,4 +285,11 @@ public class AppListActivity extends IvyActivityBase implements
 		}
 
 	}
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if (resultCode == Activity.RESULT_OK) {
+    		mAPKLoader.reLoad();
+        }
+    }
 }

@@ -11,8 +11,9 @@
 
     <ImageView
         android:id="@+id/appicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="5dp"
         android:src="@drawable/ic_file_type_apk"
         android:cropToPadding="true"
         android:scaleType="centerCrop"
@@ -33,9 +34,11 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
 	        android:layout_weight="1"
-	        android:gravity="center"
+	        android:orientation="horizontal"
+	        android:gravity="center_vertical"
 	        android:paddingLeft="10dp"
-	        android:paddingRight="10dp" >
+	        android:paddingRight="10dp"
+	        android:layout_marginTop="5dp" >
 	
 	        <TextView android:id="@+id/name"
 	            android:layout_width="0dp"
@@ -44,8 +47,7 @@
 	            android:textColor="#FF000000"
 	            android:textIsSelectable="false"
 	            android:textSize="18sp"
-	            android:layout_gravity="center"
-	            android:gravity="center" />
+	            android:gravity="left" />
 	
 	        <TextView android:id="@+id/size"
 	            android:layout_width="wrap_content"
@@ -54,8 +56,7 @@
 	            android:textColor="#FF808080"
 	            android:textIsSelectable="false"
 	            android:textSize="13sp"
-	            android:gravity="right|center"
-	            android:layout_gravity="right|center" />
+	            android:gravity="right" />
 	    </LinearLayout>
 	    
         <LinearLayout
@@ -65,6 +66,8 @@
             android:layout_weight="1" 
             android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:layout_marginTop="5dp" >
             <ProgressBar 
                 android:id="@+id/progress"

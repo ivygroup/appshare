@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,17 +18,22 @@ import android.widget.TextView;
 
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.control.ImManager;
+import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.engin.im.Person;
+import com.ivy.appshare.utils.ImageLoader;
 
-public class ReceiveListAdapter extends BaseAdapter implements OnClickListener {
+public class ReceiveListAdapter extends BaseAdapter implements OnClickListener, ImageLoader.LoadFinishListener {
     private Context mContext;
     List<MyAppInfo> mListReceiveItems;
     ImManager mImManager;
     Person mFromPerson;
+    ImageLoader mImageLoader;
 
     public ReceiveListAdapter(Context context) {
         mContext = context;
         mListReceiveItems = new ArrayList<ReceiveListAdapter.MyAppInfo>();
+
+        mImageLoader = new ImageLoader(this);
     }
 
     public void changeTransState_Begin(Person person, int fileID, String fileFullPath) {
@@ -131,6 +138,8 @@ public class ReceiveListAdapter extends BaseAdapter implements OnClickListener {
         showItemInfos(theInfo, myClass);
 
         myClass.mAppName.setText(mListReceiveItems.get(position).mDisplayName);
+        myClass.mAppIcon.setTag(myClass);
+        mImageLoader.loadImage(myClass.mAppIcon, mListReceiveItems.get(position).mFullPath, position, FileType.FileType_App);
 
         return view;
     }
@@ -220,4 +229,23 @@ public class ReceiveListAdapter extends BaseAdapter implements OnClickListener {
         public long mPos;
         public long mTotal;
     }
+
+	@Override
+	public boolean onAPKLoadFinished(ImageView view, Drawable drawable,
+			String name, String packageName, int versionCode,
+			String versionName, String path) {
+		ViewClass myClass = (ViewClass)view.getTag();
+		myClass.mAppName.setText(name);
+		return false;
+	}
+
+	@Override
+	public boolean onDrawableLoadFinished(ImageView view, Drawable drawable) {
+		return false;
+	}
+
+	@Override
+	public boolean onBitmapLoadFinished(ImageView view, Bitmap bitmap) {
+		return false;
+	}
 }
