@@ -60,6 +60,9 @@ public class APKLoader {
             @Override
             public void handleMessage(Message msg) {
                 AppsInfo app = (AppsInfo)msg.obj;
+                if (app.appLabel.charAt(0) == ' ') {
+                	app.appLabel = app.appLabel.substring(1);
+                }
                 // if find a same version, dismiss it
                 if (compareApkVersion(app) != 0) {
                 	return;

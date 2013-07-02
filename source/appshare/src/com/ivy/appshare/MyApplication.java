@@ -6,7 +6,7 @@ import android.content.Intent;
 
 public class MyApplication extends Application {
     private static MyApplication gInstance = null;
-    public static final String mPackageName = "com.ivyappshare";
+    public static final String mPackageName = "com.ivy.appshare";
     public static MyApplication getInstance() {
         return gInstance;
     }
