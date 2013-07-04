@@ -150,13 +150,13 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         doDownLine();
         if (mIvyConnectionManager != null) {
             mIvyConnectionManager.disconnectFromIvyNetwork();
         }
 
         unregisterMyReceivers();
+        super.onDestroy();
     }
 
     @Override

@@ -73,10 +73,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         textLeft.setText(LocalSetting.getInstance().getMySelf().mNickName);
         mCenterTextView = ((TextView) actionbar.findViewById(R.id.center_text_info));
         mCenterTextView.setVisibility(View.VISIBLE);
-        mCenterTextView.setText(getResources().getString(R.string.waittosend));
         mSwitchBar = actionbar.findViewById(R.id.switching_bar);
         mRightTextView = ((TextView) actionbar.findViewById(R.id.right_text_info));
-        switchBarAndToPerson(true);
+        changeActionBarToWaitOrSend(true, getResources().getString(R.string.waittosend), null);
 
         // init listview and adapter.
         mListView = (ListView)findViewById(R.id.list);
@@ -197,12 +196,14 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         mImManager.downLine();
     }
 
-    private void switchBarAndToPerson(boolean isSwitch) {
-        if (isSwitch) {
+    private void changeActionBarToWaitOrSend(boolean isWait, String centerText, String rightText) {
+        mCenterTextView.setText(centerText);
+        if (isWait) {
             mSwitchBar.setVisibility(View.VISIBLE);
             mRightTextView.setVisibility(View.GONE);
         } else {
             mSwitchBar.setVisibility(View.GONE);
+            mRightTextView.setText(rightText);
             mRightTextView.setVisibility(View.VISIBLE);
         }
     }
@@ -283,9 +284,12 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             	}
             } else if (IvyMessages.VALUE_PERSONTYPE_SOMEONE_EXIT == type) {
                 if (mImManager != null && mPersonTo != null) {
-                    mImManager.clearAllFileTranslates();
+                    if (personKey.equals(PersonManager.getPersonKey(mPersonTo))) {
+                        mImManager.clearAllFileTranslates();
+                        mPersonTo = null;
+                        changeActionBarToWaitOrSend(true, getResources().getString(R.string.waittosend), null);
+                    }
                 }
-                mPersonTo = null;
             }
         }
     }
@@ -300,9 +304,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialog,int which) {
-	                        switchBarAndToPerson(false);
-	                        mCenterTextView.setText(getResources().getString(R.string.sendto));
-	                        mRightTextView.setText(person.mNickName);
+	                        changeActionBarToWaitOrSend(false, getResources().getString(R.string.sendto), person.mNickName);
 
 	                    	if (mImManager != null) {
 	                    		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_ANSWERYES));
