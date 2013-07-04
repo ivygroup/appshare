@@ -129,6 +129,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                             mAdapter.changeTransState_TimeOut(person, id);
                         }
                         mAdapter.notifyDataSetChanged();
+                        if (mAdapter.isCompleteTranslate()) {
+                            finish();
+                        }
                     }
                         break;
 

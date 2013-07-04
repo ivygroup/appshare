@@ -210,13 +210,22 @@ public class FileTransWidget extends BaseAdapter {
         public ImageView mResultImage;
     }
 
-    public enum TransState {
-        READY,
-        BEGIN,
-        TRANSING,
-        OK,
-        FAILED,
-        TIMEOUT,
+    public static enum TransState {
+        READY(false),
+        BEGIN(false),
+        TRANSING(false),
+        OK(true),
+        FAILED(true),
+        TIMEOUT(true);
+
+        private boolean mIsComplete;
+        private TransState(boolean isComplete) {
+            mIsComplete = isComplete;
+        }
+
+        public boolean isComplete() {
+            return mIsComplete;
+        }
     }
 
     public static class MyAppInfo {

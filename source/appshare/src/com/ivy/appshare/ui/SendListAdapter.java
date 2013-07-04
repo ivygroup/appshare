@@ -83,6 +83,16 @@ public class SendListAdapter extends BaseAdapter {
         mFileTransWidget.changeAppState(fileID, FileTransWidget.TransState.TIMEOUT, 0, 0);
     }
 
+    public boolean isCompleteTranslate() {
+        List<MyAppInfo> listAppInfos = mFileTransWidget.getAllApps();
+        for (MyAppInfo info: listAppInfos) {
+            if (!info.mTransState.isComplete()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public int getCount() {
         return mFileTransWidget.getCount();
