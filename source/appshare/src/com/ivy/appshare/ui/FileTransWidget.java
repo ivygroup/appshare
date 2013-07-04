@@ -171,13 +171,14 @@ public class FileTransWidget extends BaseAdapter {
         } else if (theInfo.mTransState == TransState.OK) {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
             // myClass.mResultImage.setVisibility(View.VISIBLE);
+            myClass.mResultImage.setVisibility(View.GONE);
             myClass.mProgressBar.setProgress(100);
             myClass.mProgressText.setText("100%");
 
         } else {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
             // myClass.mResultImage.setVisibility(View.VISIBLE);
-
+            myClass.mResultImage.setVisibility(View.GONE);
         }
     }
 
