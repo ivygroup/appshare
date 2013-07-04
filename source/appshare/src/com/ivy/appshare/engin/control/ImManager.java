@@ -171,6 +171,23 @@ public class ImManager {
         return ret;
     }
 
+    public void cancelFileTranslate(Person to, long id) {
+        boolean b = mIm.cancelFileTranslate(to, id);
+        if (!b) {
+            return;
+        }
+        if (mImData == null) {
+            return;
+        }
+        mImData.updateMessageState((int)id, Table_Message.STATE_FAILED);
+        IvyMessages.sendMessageIntent(IvyMessages.VALUE_MESSAGETYPE_UPDATE, Table_Message.STATE_FAILED, (int)id, -1, null, true, null);
+    }
+
+    public void clearAllFileTranslates() {
+        mIm.clearAllFileTranslates();
+        // TODO: update database.
+    }
+
     public void clearUnReadMessage(Person person) {
         Log.i(TAG, "clear UnRead Message");
         mImData.clearUnReadMessage(person);

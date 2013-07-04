@@ -12,7 +12,6 @@ import com.ivy.appshare.engin.im.simpleimp.filetranslate.FileSendQueue;
 import com.ivy.appshare.engin.im.simpleimp.filetranslate.TcpFileServer;
 import com.ivy.appshare.engin.im.simpleimp.protocol.Receiver;
 import com.ivy.appshare.engin.im.simpleimp.protocol.Sender;
-import com.ivy.appshare.engin.im.simpleimp.protocol.VersionControl;
 import com.ivy.appshare.engin.im.simpleimp.util.KeepAlive;
 import com.ivy.appshare.engin.im.simpleimp.util.NotifactionEngin;
 
@@ -181,9 +180,24 @@ public class SimpleIm extends Im {
     }
 
     @Override
-    public void cancelFileTranslate(long id) {
-        // TODO:
+    public boolean cancelFileTranslate(Person to, long id) {
+        FileSendQueue fileSendQueue = FileSendQueue.getInstance(to);
+        if (fileSendQueue != null) {
+            return fileSendQueue.removeTask(id);
+        }
+        return false;
     }
+
+    @Override
+    public void clearAllFileTranslates() {
+        List<FileSendQueue> queues = FileSendQueue.getInstance();
+        for (FileSendQueue fileSendQueue : queues) {
+            if (fileSendQueue != null) {
+                fileSendQueue.clear();
+            }
+        }
+    }
+
 
     @Override
     public void changeUserState(int state) {

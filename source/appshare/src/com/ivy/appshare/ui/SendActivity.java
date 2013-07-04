@@ -58,6 +58,8 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private MessageBroadCastReceiver mMessageReceiver;
     private NetworkReceiver mNetworkReceiver;
 
+    private Person mPersonTo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +82,8 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new SendListAdapter(this);
         mListView.setAdapter(mAdapter);
+        
+        mPersonTo = null;
 
         // handler for messages
         mHandler = new Handler(this.getMainLooper()) {
@@ -87,6 +91,10 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MESSAGE_SERVICE_CONNECTED:
+                        if (mImManager != null) {
+                            mImManager.clearAllFileTranslates();
+                        }
+
                     	// create hotspot after service connected
                     	registerMyReceivers();
 	                    if (mIvyConnectionManager != null) {
@@ -150,12 +158,15 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (mImManager != null) {
+            mImManager.clearAllFileTranslates();
+        }
         unregisterMyReceivers();
         doDownLine();
 		if (mIvyConnectionManager != null) {
 			mIvyConnectionManager.disableHotspot();
 		}
+		super.onDestroy();
     }
 
     @Override
@@ -267,9 +278,14 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             Person person = PersonManager.getInstance().getPerson(personKey);
 
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
-            	if (mImManager != null) {
+            	if (mImManager != null && mPersonTo == null) {
             		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_IAMHOTSPOT));
             	}
+            } else if (IvyMessages.VALUE_PERSONTYPE_SOMEONE_EXIT == type) {
+                if (mImManager != null && mPersonTo != null) {
+                    mImManager.clearAllFileTranslates();
+                }
+                mPersonTo = null;
             }
         }
     }
@@ -293,6 +309,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 	                    	}
 
 	                        mAdapter.beginTranslate(mImManager, person);
+	                        mPersonTo = person;
 	                    }
 	                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 	                    @Override

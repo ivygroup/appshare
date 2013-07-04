@@ -29,7 +29,8 @@ public abstract class Im {
     public abstract void sendGroupMessage(long id, Person to, String message);
     public abstract void sendFile(long id, Person to, String msg, String filename, FileType type);
     public abstract void sendGroupFile(long id, Person to, String message, String filename, Im.FileType type);
-    public abstract void cancelFileTranslate(long id);
+    public abstract boolean cancelFileTranslate(Person to, long id);
+    public abstract void clearAllFileTranslates();
     public abstract void changeUserState(int state);
 
     // release resources.

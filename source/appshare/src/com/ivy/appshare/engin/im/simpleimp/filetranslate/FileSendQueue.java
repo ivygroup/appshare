@@ -2,6 +2,7 @@ package com.ivy.appshare.engin.im.simpleimp.filetranslate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +31,10 @@ public class FileSendQueue {
         } else {
             return gInstance.get(key);
         }
+    }
+
+    public static List<FileSendQueue> getInstance() {
+        return new ArrayList<FileSendQueue>(gInstance.values());
     }
 
     public static void createInstance(Sender sender) {
@@ -106,6 +111,30 @@ public class FileSendQueue {
             return;
         }
         mTasks.poll();
+        mIsSending = false;
+        mSendThread.interrupt();
+    }
+
+    public synchronized boolean removeTask(long id) {
+        Task task = mTasks.peek();
+        if (task == null) {
+            return false;
+        }
+        if (task != null && task.mUserId == id) {
+            Log.e(TAG, "Cant remove current task.");
+            return false;
+        }
+
+        for (Task tmp: mTasks) {
+            if (tmp != null && tmp.mUserId == id) {
+                return mTasks.remove(tmp);
+            }
+        }
+        return false;
+    }
+
+    public synchronized void clear() {
+        mTasks.clear();
         mIsSending = false;
         mSendThread.interrupt();
     }
