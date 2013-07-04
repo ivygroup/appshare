@@ -903,13 +903,18 @@ public class ConnectionManagement implements WifiStateChangedListener {
             return true;
         }
 
+        /*
         if ((ssid == null) 
                 || (ssid.length() == 0) 
                 || (bssid == null) 
                 || (bssid.length() == 0)){
             return false;
-        }
+        } //*/
         
+        if ((ssid == null) || (ssid.length() == 0)) {
+            return false;
+        }
+
         String[] arraySSID = ssid.split("-", 3);
         if (arraySSID.length < 3) {
             return false;
