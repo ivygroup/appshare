@@ -5,23 +5,23 @@
 	<string name="action_settings">Settings</string>
 	<string name="hello_world">Hello world!</string>
 
-	<string name="share_list">%1$s shared %2$d apk.</string>
-	<string name="wait_receive_dl_title">Wait</string>
-	<string name="wait_receive_dl_message">Wait to receive apk.</string>
-	<string name="choose_app">%1$d item selected</string>
+	<string name="share_list">%1$s is sharing %2$d APKs.</string>
+	<string name="wait_receive_dl_title">Waiting</string>
+	<string name="wait_receive_dl_message">Waiting to receive APKs.</string>
+	<string name="choose_app">%1$d items selected.</string>
 
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>
 	<string name="change_name">Change name</string>
-	<string name="name_empty">A user name can not be a null one！</string>
+	<string name="name_empty">Please input a user name.</string>
 
-	<string name="waittosend">wait your friends ...</string>
+	<string name="waittosend">Waiting for connection ...</string>
 	<string name="sendto">to</string>
 
-	<string name="requestsendtitle">request send</string>
-	<string name="requestsendmessage">Are you sure share files to %1$s</string>
-	<string name="from">receive from</string>
+	<string name="requestsendtitle">Send a request</string>
+	<string name="requestsendmessage">%1$s sends a request for the files. Will you share them to %1$s?</string>
+	<string name="from">Receive from</string>
 
-   <string name="waittoreceive">waiting ...</string>
-   <string name="sendreject">%1$s reject you request</string>
+	<string name="waittoreceive">Waiting for a permission ...</string>
+	<string name="sendreject">Sorry! You are not allowed to get the files from %1$s.</string>
 </resources>

@@ -4,23 +4,23 @@
 	<string name="app_name">IvyAppShare</string>
 	<string name="action_settings">设置</string>
 
-	<string name="share_list">%1$s 分享了 %2$d 个应用。</string>
+	<string name="share_list">%1$s分享了%2$d个应用。</string>
 	<string name="wait_receive_dl_title">等待</string>
-	<string name="wait_receive_dl_message">等待接受应用.</string>
+	<string name="wait_receive_dl_message">等待接收应用</string>
 	<string name="choose_app">已选%1$d项</string>
 
 	<string name="ok">确定</string>
 	<string name="cancel">取消</string>
 	<string name="change_name">修改名称</string>
-    <string name="name_empty">用户名不能为空！</string>
+    <string name="name_empty">请输入用户名。</string>
 
     <string name="waittosend">等待好友连接...</string>
 	<string name="sendto">发送给</string>
 	<string name="from">接收应用来自</string>
 
 	<string name="requestsendtitle">请求发送</string>
-	<string name="requestsendmessage">%1$s请求你的共享文件, 给他吗?</string>
+	<string name="requestsendmessage">%1$s请求您的共享文件，要发给%1$s这文件吗？</string>
 
-	<string name="waittoreceive">等待接收 ...</string>
-	<string name="sendreject">%1$s拒绝了你的请求</string>
+	<string name="waittoreceive">等待许可……</string>
+	<string name="sendreject">对不起！%1$s拒绝了您获取这些文件。</string>
 </resources>
