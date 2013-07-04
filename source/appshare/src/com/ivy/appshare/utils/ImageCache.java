@@ -52,6 +52,9 @@ public class ImageCache {
     }
 
     public boolean setImageView(ImageView view) {
+        if (view == null) {
+            return false;
+        }
     	if (mType == CACHE_TYPE_BITMAP) {
     		view.setImageBitmap(mBitmap.get());
     	} else {
