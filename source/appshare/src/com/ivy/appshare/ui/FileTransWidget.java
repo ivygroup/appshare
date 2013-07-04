@@ -149,36 +149,33 @@ public class FileTransWidget extends BaseAdapter {
 
         if (theInfo.mTransState == TransState.READY) {
             myClass.mProgressLinearLayout.setVisibility(View.GONE);
-            // myClass.mResultImage.setVisibility(View.INVISIBLE);
-            myClass.mResultImage.setVisibility(View.GONE);
+            myClass.mResultImage.setVisibility(View.INVISIBLE);
 
         } else if (theInfo.mTransState == TransState.BEGIN) {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            // myClass.mResultImage.setVisibility(View.INVISIBLE);
-            myClass.mResultImage.setVisibility(View.GONE);
+            myClass.mResultImage.setVisibility(View.INVISIBLE);
             int progress = 0;
             myClass.mProgressBar.setProgress(progress);
             myClass.mProgressText.setText(progress+"%");
 
         } else if (theInfo.mTransState == TransState.TRANSING) {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            // myClass.mResultImage.setVisibility(View.INVISIBLE);
-            myClass.mResultImage.setVisibility(View.GONE);
+            myClass.mResultImage.setVisibility(View.INVISIBLE);
             int progress = (int)(theInfo.mPos*100/theInfo.mTotal);
             myClass.mProgressBar.setProgress(progress);
             myClass.mProgressText.setText(progress+"%");
 
         } else if (theInfo.mTransState == TransState.OK) {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            // myClass.mResultImage.setVisibility(View.VISIBLE);
-            myClass.mResultImage.setVisibility(View.GONE);
+            myClass.mResultImage.setImageResource(R.drawable.ic_send_successful);
+            myClass.mResultImage.setVisibility(View.VISIBLE);
             myClass.mProgressBar.setProgress(100);
             myClass.mProgressText.setText("100%");
 
         } else {
             myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            // myClass.mResultImage.setVisibility(View.VISIBLE);
-            myClass.mResultImage.setVisibility(View.GONE);
+            myClass.mResultImage.setImageResource(R.drawable.ic_send_failed);
+            myClass.mResultImage.setVisibility(View.VISIBLE);
         }
     }
 
