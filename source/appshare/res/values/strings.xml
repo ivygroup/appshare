@@ -23,4 +23,5 @@
 	<string name="from">receive from</string>
 
    <string name="waittoreceive">waiting ...</string>
+   <string name="sendreject">%1$s reject you request</string>
 </resources>

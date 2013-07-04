@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
+import com.ivy.appshare.engin.control.ImManager;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.control.PersonManager;
 import com.ivy.appshare.engin.control.TranslateFileControl;
@@ -51,9 +53,6 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private View mSwitchBar;
     private TextView mCenterTextView;
     private TextView mRightTextView;
-    
-    private boolean mIsHotspotCreated = false;
-
 
     private PersonBroadCastReceiver mPersonReceiver;
     private MessageBroadCastReceiver mMessageReceiver;
@@ -82,15 +81,17 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         mAdapter = new SendListAdapter(this);
         mListView.setAdapter(mAdapter);
 
-        mIsHotspotCreated = false;
-
         // handler for messages
         mHandler = new Handler(this.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MESSAGE_SERVICE_CONNECTED:
-                        onResume();
+                    	// create hotspot after service connected
+                    	registerMyReceivers();
+	                    if (mIvyConnectionManager != null) {
+	                    	mIvyConnectionManager.createHotspot(NeedSendAppList.getInstance().mListAppInfo.size());
+	                    }
                         break;
 
                     case MESSAGE_NETWORK_STATE_CHANGED:
@@ -98,13 +99,10 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                             int type = msg.arg1;
                             int state = msg.arg2;
 
-                            if (state == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
-                            	mIsHotspotCreated = true;
-                            }
                             if (ConnectionState.isConnected(state)) {
-                                doUpLine();
+                            	doUpLine();
                             } else {
-                                doDownLine();
+                            	doDownLine();
                             }
                         }
                         break;
@@ -148,21 +146,13 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        registerMyReceivers();
-        if (mIvyConnectionManager != null) {
-            mIvyConnectionManager.createHotspot(NeedSendAppList.getInstance().mListAppInfo.size());
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mIvyConnectionManager != null) {
-            mIvyConnectionManager.disableHotspot();
-        }
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterMyReceivers();
+        doDownLine();
+		if (mIvyConnectionManager != null) {
+			mIvyConnectionManager.disableHotspot();
+		}
     }
 
     @Override
@@ -203,6 +193,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         }
     }
 
+    private void registerNetworkReceivers() {
+    	
+    }
 
     private void registerMyReceivers() {
         if (mImManager == null) {
@@ -258,45 +251,63 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         }
     }
 
-
-
     private class PersonBroadCastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent)
         {
             if (mImManager == null) {
                 return;
             }
-            if (!mIsHotspotCreated) {
-            	return;
-            }
 
             int type = intent.getIntExtra(IvyMessages.PARAMETER_PERSON_TYPE, 0);
-            
+
+            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_PERSON_VALUE);
+            Person person = PersonManager.getInstance().getPerson(personKey);
+
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
-                askIfSendToThisPerson(intent);
+            	if (mImManager != null) {
+            		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_IAMHOTSPOT));
+            	}
             }
         }
+    }
 
-        private void askIfSendToThisPerson(Intent intent) {
-            String personKey = intent.getStringExtra(IvyMessages.PARAMETER_PERSON_VALUE);
-            final Person person = PersonManager.getInstance().getPerson(personKey);
-            
-            Dialog alertDialog = CommonUtils.getMyAlertDialogBuilder(SendActivity.this)
-                    .setTitle(R.string.requestsendtitle)
-                    .setMessage(getResources().getString(R.string.requestsendmessage, person.mNickName))
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,int which) {
-                                    switchBarAndToPerson(false);
-                                    mCenterTextView.setText(getResources().getString(R.string.sendto));
-                                    mRightTextView.setText(person.mNickName);
-                                    mAdapter.beginTranslate(mImManager, person);
-                                }
-                            }).setNegativeButton(R.string.cancel, null).create();
-            alertDialog.show();
-        }
+    private void askIfSendToThisPerson(Person msgPerson) {
+        final Person person = msgPerson;
+
+        Dialog alertDialog = CommonUtils.getMyAlertDialogBuilder(SendActivity.this)
+                .setTitle(R.string.requestsendtitle)
+                .setMessage(getResources().getString(R.string.requestsendmessage, person.mNickName))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+	                    @Override
+	                    public void onClick(DialogInterface dialog,int which) {
+	                        switchBarAndToPerson(false);
+	                        mCenterTextView.setText(getResources().getString(R.string.sendto));
+	                        mRightTextView.setText(person.mNickName);
+
+	                    	if (mImManager != null) {
+	                    		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_ANSWERYES));
+	                    	}
+
+	                        mAdapter.beginTranslate(mImManager, person);
+	                    }
+	                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+	                    @Override
+	                    public void onClick(DialogInterface dialog,int which) {
+	                    	if (mImManager != null) {
+	                    		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_ANSWERNO));
+	                    	}
+	                    }
+	                }).create();
+        alertDialog.show();
+    }
+
+    private void processInnerMessage(Person person, int msgType) {
+    	switch (msgType) {
+    		case ImManager.IVY_APP_REQUEST:
+    			askIfSendToThisPerson(person);
+    		break;
+    	}
     }
 
     private class MessageBroadCastReceiver extends BroadcastReceiver {
@@ -306,10 +317,17 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             int id = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_ID, 0);
             int messageState = intent.getIntExtra(IvyMessages.PARAMETER_MESSGAE_STATE, 0);
             int fileType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_FILE_TYPE, 0);
-            String finename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
+            String filename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
             boolean isMeSay = intent.getBooleanExtra(IvyMessages.PARAMETER_MESSAGE_SELF, true);
             String personKey = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_PERSON);
             Person person = PersonManager.getInstance().getPerson(personKey);
+
+            if (fileType == FileType.FileType_CommonMsg.ordinal()) {
+            	int ret = ImManager.parseIvyInnerMessage(filename);
+            	if ( ret != -1) {
+            		processInnerMessage(person, ret);
+            	}
+            }
 
             if (fileType != FileType.FileType_App.ordinal()) {
                 return;
@@ -327,7 +345,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             abortBroadcast();
         }
     }
-    
+
     private class NetworkReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
+import com.ivy.appshare.engin.control.ImManager;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.control.PersonManager;
 import com.ivy.appshare.engin.im.Im.FileType;
@@ -59,8 +60,6 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     private MessageBroadCastReceiver mMessageReceiver;
     private NetworkReceiver mNetworkReceiver;
 
-    private boolean mIsNetworkConnected = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,16 +89,14 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
         mAdapter = new ReceiveListAdapter(this);
         mListView.setAdapter(mAdapter);
 
-        mIsNetworkConnected = false;
-
         // handler for messages
         mHandler = new Handler(this.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MESSAGE_SERVICE_CONNECTED:
+                    	registerMyReceivers();
                     	mIvyConnectionManager.connectIvyNetwork(mSSID);
-                        onResume();
                         break;
 
                     case MESSAGE_NETWORK_STATE_CHANGED: {
@@ -107,12 +104,9 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
                             int state = msg.arg2;
 
                             if (ConnectionState.isConnected(state)) {
-                                if (state == ConnectionState.CONNECTION_STATE_WIFI_IVY_CONNECTED) {
-                                	mIsNetworkConnected = true;
-                                }
-                                doUpLine();
+                            	doUpLine();
                             } else {
-                                doDownLine();
+                            	doDownLine();
                             }
                         }
                         break;
@@ -155,6 +149,17 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        doDownLine();
+        if (mIvyConnectionManager != null) {
+            mIvyConnectionManager.disconnectFromIvyNetwork();
+        }
+
+        unregisterMyReceivers();
+    }
+
+    @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         super.onServiceConnected(name, service);
         mHandler.sendEmptyMessage(MESSAGE_SERVICE_CONNECTED);
@@ -192,16 +197,6 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
         mImManager.downLine();
     }
 
-/*    private void switchBarAndToPerson(boolean isSwitch) {
-        if (isSwitch) {
-            mSwitchBar.setVisibility(View.VISIBLE);
-            mRightTextView.setVisibility(View.GONE);
-        } else {
-            mSwitchBar.setVisibility(View.GONE);
-            mRightTextView.setVisibility(View.VISIBLE);
-        }
-    }
-*/
     private void registerMyReceivers() {
         if (mImManager == null) {
             return; // if no immanager, can't create receivers.
@@ -255,26 +250,11 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
             mNetworkReceiver = null;
         }
     }
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	registerMyReceivers();
-    }
-
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	unregisterMyReceivers();
-    }
 
     private class PersonBroadCastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             if (mImManager == null) {
                 return;
-            }
-            if (!mIsNetworkConnected) {
-            	return;
             }
 
             int type = intent.getIntExtra(IvyMessages.PARAMETER_PERSON_TYPE, 0);
@@ -282,11 +262,27 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
                 Person person = PersonManager.getInstance().getPerson(personKey);
                 // TODO , ask user if send to this person.
+            }
+        }
+    }
+
+    private void processInnerMessage(Person person, int msgType) {
+    	switch (msgType) {
+    		case ImManager.IVY_APP_IAMHOTSPOT:
+    			if (mImManager != null) {
+    				mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_REQUEST));
+    			}
+    			break;
+    		case ImManager.IVY_APP_ANSWERYES:
                 switchBarAndToPerson(false);
                 mCenterTextView.setText(getResources().getString(R.string.from));
                 mRightTextView.setText(person.mNickName);
-            }
-        }
+    			break;
+    		case ImManager.IVY_APP_ANSWERNO:
+    			Toast.makeText(this, getResources().getString(R.string.sendreject, person.mNickName), Toast.LENGTH_SHORT).show();
+    			finish();
+    			break;
+    	}
     }
 
     private class MessageBroadCastReceiver extends BroadcastReceiver {
@@ -295,10 +291,17 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
             int id = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_ID, 0);
             int messageState = intent.getIntExtra(IvyMessages.PARAMETER_MESSGAE_STATE, 0);
             int fileType = intent.getIntExtra(IvyMessages.PARAMETER_MESSAGE_FILE_TYPE, 0);
-            String finename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
+            String filename = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_FILE_VALUE);
             boolean isMeSay = intent.getBooleanExtra(IvyMessages.PARAMETER_MESSAGE_SELF, true);
             String personKey = intent.getStringExtra(IvyMessages.PARAMETER_MESSAGE_PERSON);
             Person person = PersonManager.getInstance().getPerson(personKey);
+
+            if (fileType == FileType.FileType_CommonMsg.ordinal()) {
+            	int ret = ImManager.parseIvyInnerMessage(filename);
+            	if ( ret != -1) {
+            		processInnerMessage(person, ret);
+            	}
+            }
 
             if (fileType != FileType.FileType_App.ordinal()) {
                 return;
