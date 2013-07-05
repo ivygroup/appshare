@@ -9,6 +9,7 @@ import java.io.OutputStream;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -235,13 +236,11 @@ public class CommonUtils {
         Intent intent = new Intent(Intent.ACTION_SEND);
     	intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(content)));
     	intent.setType(CommonUtils.MIMETYPE_APPLICATION);
-    	if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-    		intent.setClassName("com.android.bluetooth" , "com.android.bluetooth.opp.BluetoothOppLauncherActivity");
-    	} else {
-    		ComponentName comp = new ComponentName("com.mediatek.bluetooth","com.mediatek.bluetooth.BluetoothShareGatewayActivity");
-    		intent.setComponent(comp);
+    	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+    	if (adapter != null) {
+    		intent.setPackage("com.android.bluetooth");
+    		context.startActivity(intent);
     	}
-    	context.startActivity(intent);
     }
 
 	public static void importVcard(Context context, String content) {
