@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -15,14 +16,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ivy.appshare.R;
+import com.ivy.appshare.utils.CommonUtils;
 
-public class FileTransWidget extends BaseAdapter {
+public class FileTransWidget extends BaseAdapter implements OnClickListener {
     private Context mContext;
     private List<MyAppInfo> mAppItems;
+    boolean mIsReceiver;
 
-    public FileTransWidget(Context context) {
+    public FileTransWidget(Context context, boolean isReceiver) {
         mContext = context;
         mAppItems = new ArrayList<FileTransWidget.MyAppInfo>();
+        mIsReceiver = isReceiver;
     }
 
     public void addOneAppInfo(MyAppInfo info) {
@@ -90,6 +94,27 @@ public class FileTransWidget extends BaseAdapter {
         }
     }
 
+    public MyAppInfo getItemById(int id) {
+        for (MyAppInfo info: mAppItems) {
+            if (info.mID == id) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    public MyAppInfo getItemByPath(String path) {
+        for (MyAppInfo info: mAppItems) {
+            if (info.mFullPath.equals(path)) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+
+    //====================================================================
+
     @Override
     public int getCount() {
         return mAppItems.size();
@@ -117,6 +142,7 @@ public class FileTransWidget extends BaseAdapter {
             view = factory.inflate(R.layout.listitem_send , null);
             myClass = new ViewClass();
 
+            // myClass.mLayout = (LinearLayout)view.findViewById(R.id.listitem);
             myClass.mIcon = (ImageView)view.findViewById(R.id.appicon);
             myClass.mAppName = (TextView)view.findViewById(R.id.name);
             myClass.mFileSize = (TextView)view.findViewById(R.id.size);
@@ -131,8 +157,11 @@ public class FileTransWidget extends BaseAdapter {
             myClass = (ViewClass)view.getTag();
         }
 
-        MyAppInfo theInfo;
-        theInfo = mAppItems.get(position);
+        MyAppInfo theInfo = mAppItems.get(position);
+
+        myClass.mMyAppInfo = theInfo;
+        view.setOnClickListener(this);
+
         showItemInfos(theInfo, myClass);
 
         return view;
@@ -179,25 +208,20 @@ public class FileTransWidget extends BaseAdapter {
         }
     }
 
-    public MyAppInfo getItemById(int id) {
-        for (MyAppInfo info: mAppItems) {
-            if (info.mID == id) {
-                return info;
-            }
+    @Override
+    public void onClick(View arg0) {
+        if (!mIsReceiver) {
+            return;
         }
-        return null;
+        MyAppInfo theInfo = ((ViewClass)arg0.getTag()).mMyAppInfo;
+        CommonUtils.installApp(mContext, theInfo.mFullPath);
     }
 
-    public MyAppInfo getItemByPath(String path) {
-        for (MyAppInfo info: mAppItems) {
-            if (info.mFullPath.equals(path)) {
-                return info;
-            }
-        }
-        return null;
-    }
+
+    //====================================================================
 
     private static class ViewClass {
+        // public LinearLayout mLayout;
         public ImageView mIcon;
         public TextView mAppName;
         public TextView mFileSize;
@@ -205,6 +229,8 @@ public class FileTransWidget extends BaseAdapter {
         public ProgressBar mProgressBar;
         public TextView mProgressText;
         public ImageView mResultImage;
+
+        public MyAppInfo mMyAppInfo;
     }
 
     public static enum TransState {

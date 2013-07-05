@@ -20,7 +20,7 @@ public class SendListAdapter extends BaseAdapter {
     private FileTransWidget mFileTransWidget;
 
     public SendListAdapter(Context context) {
-        mFileTransWidget = new FileTransWidget(context);
+        mFileTransWidget = new FileTransWidget(context, false);
 
         for (AppsInfo appinfo: NeedSendAppList.getInstance().mListAppInfo) {
             FileTransWidget.MyAppInfo info = new FileTransWidget.MyAppInfo();

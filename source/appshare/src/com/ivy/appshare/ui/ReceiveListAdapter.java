@@ -26,7 +26,7 @@ public class ReceiveListAdapter extends BaseAdapter implements ImageLoader.LoadF
     private ImageLoader mImageLoader;
 
     public ReceiveListAdapter(Context context) {
-        mFileTransWidget = new FileTransWidget(context);
+        mFileTransWidget = new FileTransWidget(context, true);
         mImageLoader = new ImageLoader(this);
     }
 
