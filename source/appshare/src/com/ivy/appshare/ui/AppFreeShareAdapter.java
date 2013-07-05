@@ -75,7 +75,7 @@ public class AppFreeShareAdapter extends BaseAdapter {
 		if (appInfo.type == AppsInfo.APP_INSTALLED) {
 			holder.viewInstalled.setVisibility(View.VISIBLE);
 		} else {
-			holder.viewInstalled.setVisibility(View.GONE);
+			holder.viewInstalled.setVisibility(View.INVISIBLE);
 		}
 		return view;
 	}
