@@ -16,7 +16,7 @@
     <dimen name="list_contact_item_hall_title_textsize">20sp</dimen>
 
     <dimen name="chat_buttom_image_button_width_height">45dp</dimen>
-    <dimen name="common_title_height">47dp</dimen>
+    <dimen name="common_title_height">36dp</dimen>
 
     <dimen name="user_setting_layout_heigth">60dp</dimen>
     <dimen name="user_setting_textview_width">100dp</dimen>

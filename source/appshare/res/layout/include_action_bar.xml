@@ -23,14 +23,15 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_centerInParent="true"
-        android:textColor="@color/action_bar_text_text_color"
-        android:textSize="@dimen/list_main_textsize" />
+        android:textColor="@color/list_main"
+        android:textSize="@dimen/list_secondray_textsize" />
 
 	<RelativeLayout
 		android:id="@+id/right_layout"
 		android:layout_alignParentRight="true"
 	    android:layout_width="wrap_content"
 	    android:layout_height="@dimen/common_title_height"
+	    android:layout_marginRight="5dp"
 		android:maxWidth="120dp"
 	    android:gravity="center" >
 	
