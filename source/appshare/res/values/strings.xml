@@ -3,7 +3,6 @@
 
 	<string name="app_name">IvyAppShare</string>
 	<string name="action_settings">Settings</string>
-	<string name="hello_world">Hello world!</string>
 
 	<string name="share_list">%1$s is sharing %2$d APKs.</string>
 	<string name="wait_receive_dl_title">Waiting</string>

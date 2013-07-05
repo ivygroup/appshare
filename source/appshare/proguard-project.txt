@@ -18,3 +18,59 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+
+-dontwarn javax.activation.**
+-keep class javax.activation.** { *; }
+
+-dontwarn com.sun.activation.registries.**
+-keep class com.sun.activation.registries.** { *; }
+
+-dontwarn myjava.awt.datatransfer.**
+-keep class myjava.awt.datatransfer.** { *; }
+
+-dontwarn android.support.v4.**
+-keep class android.support.v4.** { *; }
+-keep public class * extends android.support.v4.**
+
+-dontwarn com.google.zxing.**
+-keep class com.google.zxing.** { *; }
+
+-dontwarn org.apache.harmony.**
+-keep class org.apache.harmony.** { *; }
+
+-dontwarn com.sun.mail.**
+-keep class com.sun.mail.** { *; }
+
+-dontwarn javax.mail.**
+-keep class javax.mail.** { *; }
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+-dontnote com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
