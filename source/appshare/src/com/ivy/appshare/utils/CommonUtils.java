@@ -235,7 +235,7 @@ public class CommonUtils {
     public static void shareWithBluttooth(Context context, String content) {
         Intent intent = new Intent(Intent.ACTION_SEND);
     	intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(content)));
-    	intent.setType(CommonUtils.MIMETYPE_APPLICATION);
+    	intent.setType("*/*");
     	BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
     	if (adapter != null) {
     		intent.setPackage("com.android.bluetooth");
