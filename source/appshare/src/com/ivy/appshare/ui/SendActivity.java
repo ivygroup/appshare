@@ -137,7 +137,8 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                         }
                         mAdapter.notifyDataSetChanged();
                         if (mAdapter.isCompleteTranslate()) {
-                            finish();
+                            mPersonTo = null;
+                            changeActionBarToWaitOrSend(true, getResources().getString(R.string.waittosend), null);
                         }
                     }
                         break;
