@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.R;
 
-public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickListener {
+public class AppFreeShareAdapter extends BaseAdapter {
 
 	private Context mContext;
 	private List<AppsInfo> mlistAppInfo = null;
@@ -50,7 +50,7 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 		ViewHolder holder = null;
 		if (convertview == null || convertview.getTag() == null) {
 			view = LayoutInflater.from(mContext).inflate(R.layout.listitem_app, null);
-			view.setClickable(true);
+			//view.setClickable(true);
 			holder = new ViewHolder(view);
 			view.setTag(holder);
 		} else {
@@ -59,7 +59,7 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 		}
 		holder.pos = position;
 
-		view.setOnClickListener(this);
+		//view.setOnClickListener(this);
 
 		AppsInfo appInfo = (AppsInfo) getItem(position);
 		holder.appIcon.setImageDrawable(appInfo.appIcon);
@@ -72,6 +72,11 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 			holder.tvAppLabel.setTextColor(mContext.getResources().getColor(R.color.list_secondray));
 			holder.appSelected.setVisibility(View.GONE);
 		}
+		if (appInfo.type == AppsInfo.APP_INSTALLED) {
+			holder.viewInstalled.setVisibility(View.VISIBLE);
+		} else {
+			holder.viewInstalled.setVisibility(View.GONE);
+		}
 		return view;
 	}
 
@@ -80,6 +85,7 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 		public ImageView appIcon;
 		public TextView tvAppLabel;
 		public ImageView appSelected;
+		public View viewInstalled;
 		public int pos;
 
 		public ViewHolder(View view) {
@@ -87,13 +93,11 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 			this.appIcon = (ImageView) view.findViewById(R.id.imgApp);
 			this.tvAppLabel = (TextView) view.findViewById(R.id.tvAppLabel);
 			this.appSelected = (ImageView) view.findViewById(R.id.app_selected);
+			this.viewInstalled = view.findViewById(R.id.layout_install);
 		}
 	}
 
-	@Override
-	public void onClick(View v) {
-		ViewHolder holder = (ViewHolder) v.getTag();
-		int pos = holder.pos;
+	public void onClickItem(int pos) {
 		int nSize = mlistAppInfo.size();
 		if (pos < 0 || pos >= nSize) {
 			return;
@@ -102,7 +106,17 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 		AppsInfo info = mlistAppInfo.get(pos);
 		info.isSelected = !info.isSelected;
 		notifyDataSetChanged();
-		
+
+		mListener.onSelectedChanged();
+	}
+
+	public void disSelectAll() {
+		int nSize = mlistAppInfo.size();
+		for (int i=0; i<nSize; i++) {
+			mlistAppInfo.get(i).isSelected = false;
+		}
+		notifyDataSetChanged();
+
 		mListener.onSelectedChanged();
 	}
 

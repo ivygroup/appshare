@@ -28,4 +28,11 @@
 	<string name="send_by_bluetooth">Share IvyAppShare by Bluetooth</string>
 	   <string name="send_by_bluetooth_title">How to set bluetooth of your friends</string>
     <string name="send_by_bluetooth_message">Please ask your friend open bluetooth and let discovery is checked.</string>
+    <string name="haveinstalled">Installed</string>
+
+	<string name="app_action_view">View</string>
+	<string name="app_action_install">Install</string>
+	<string name="app_action_launch">Launch</string>
+	<string name="app_action_uninstall">UnInstalled</string>
+	<string name="app_action_bluetoothshare">Share by Bluetooth</string>
 </resources>

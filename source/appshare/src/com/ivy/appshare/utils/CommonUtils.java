@@ -231,6 +231,19 @@ public class CommonUtils {
 		}
 	}
 
+    public static void shareWithBluttooth(Context context, String content) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+    	intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(content)));
+    	intent.setType(CommonUtils.MIMETYPE_APPLICATION);
+    	if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+    		intent.setClassName("com.android.bluetooth" , "com.android.bluetooth.opp.BluetoothOppLauncherActivity");
+    	} else {
+    		ComponentName comp = new ComponentName("com.mediatek.bluetooth","com.mediatek.bluetooth.BluetoothShareGatewayActivity");
+    		intent.setComponent(comp);
+    	}
+    	context.startActivity(intent);
+    }
+
 	public static void importVcard(Context context, String content) {
         // import vcard
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -261,6 +274,13 @@ public class CommonUtils {
         context.startActivity(intent);
 	}
 
+	public static void launchApp(Context context, String packageName) {
+		Intent intent = context.getPackageManager().
+				getLaunchIntentForPackage(packageName);
+        context.startActivity(intent);
+	}
+
+	
     //check the Network is available
     public static boolean isNetworkAvailable() {
         try{

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-      <ListView
+    <ListView
        android:id="@+id/shared_person"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
@@ -23,6 +23,7 @@
         android:horizontalSpacing="5dp"
         android:columnWidth="80dp"
         android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:gravity="center"
+        android:listSelector="@drawable/list_selector"/>
 
 </LinearLayout>

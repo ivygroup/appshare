@@ -5,7 +5,6 @@
 	android:padding="5dp"
 	android:orientation="vertical"
 	android:gravity="center">
-	
 	<FrameLayout
 	    android:layout_width="65dp"
 	    android:layout_height="65dp"
@@ -17,7 +16,7 @@
 	        android:layout_height="65dp"
 	        android:padding="5dp"
 	        android:scaleType="centerInside" />
-	
+
 	    <ImageView
 	        android:id="@+id/app_selected"
 	        android:layout_width="match_parent"
@@ -25,6 +24,26 @@
 	        android:src="@drawable/ic_selected_app"
 	        android:visibility="gone" />
 	</FrameLayout>
+
+    <LinearLayout 
+        android:id="@+id/layout_install"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-6dp"
+        android:orientation="horizontal"
+        android:gravity="right|center_vertical">
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_app_installed" />
+        <TextView
+            android:text="@string/haveinstalled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF6EA818"
+            android:textSize="10sp" />
+    </LinearLayout>
 
 	<TextView android:id="@+id/tvAppLabel"
 	    android:layout_width="match_parent" 

@@ -23,8 +23,15 @@
 
 	<string name="waittoreceive">等待许可……</string>
 	<string name="sendreject">对不起！%1$s拒绝了您获取这些文件。</string>
-
 	<string name="send_by_bluetooth">通过蓝牙共享IvyAppShare</string>
 	<string name="send_by_bluetooth_title">对方如何设置</string>
 	<string name="send_by_bluetooth_message">对方需开启蓝牙并打开可被发现性</string>
+	
+	<string name="haveinstalled">已安装</string>
+
+    <string name="app_action_view">查看</string>
+    <string name="app_action_install">安装</string>
+    <string name="app_action_launch">启动</string>
+    <string name="app_action_uninstall">卸载</string>
+    <string name="app_action_bluetoothshare">蓝牙共享</string>
 </resources>

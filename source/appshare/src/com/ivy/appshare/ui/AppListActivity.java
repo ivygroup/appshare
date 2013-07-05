@@ -19,10 +19,16 @@ import android.os.IBinder;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -35,12 +41,14 @@ import android.widget.Toast;
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
+import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.utils.APKLoader;
 import com.ivy.appshare.utils.CommonUtils;
 import com.ivy.appshare.utils.IvyActivityBase;
 
 public class AppListActivity extends IvyActivityBase implements
-		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener {
+		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener,
+		AdapterView.OnItemClickListener{
 
 	private AppFreeShareAdapter mAppAdapter = null;
 	private APKLoader mAPKLoader = null;
@@ -57,6 +65,8 @@ public class AppListActivity extends IvyActivityBase implements
 	private List<String> mFileShareName = new ArrayList<String>();
 	private List<String> mShareData;
 	private ArrayAdapter mAdapter;
+
+	private ApkBroadcastReceiver mApkReceiver = new ApkBroadcastReceiver();
 
 	private static final int MESSAGE_NETWORK_SCAN_FINISH = 0;
 	private static final int MESSAGE_NETWORK_CLEAR_IVYROOM = 1;
@@ -80,6 +90,7 @@ public class AppListActivity extends IvyActivityBase implements
 		mTextSelected = ((TextView) actionbar
 				.findViewById(R.id.center_text_info));
 		mTextSelected.setVisibility(View.VISIBLE);
+		mTextSelected.setOnClickListener(this);
 		setSelectItemText(0);
 
 		mTextLeft = ((TextView) actionbar.findViewById(R.id.left_text_info));
@@ -151,7 +162,85 @@ public class AppListActivity extends IvyActivityBase implements
 				super.handleMessage(msg);
 			}
 		};
+		mAppGridView.setOnCreateContextMenuListener(this);
+		mAppGridView.setOnItemClickListener(this);
 
+		mApkReceiver = new ApkBroadcastReceiver();
+		registerApkReceiver();
+	}
+
+	private void registerApkReceiver() {
+    	IntentFilter filter = new IntentFilter();
+    	filter.addDataScheme("package");
+    	filter.addAction(Intent.ACTION_PACKAGE_ADDED);
+    	filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+    	filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+    	registerReceiver(mApkReceiver, filter);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo); 
+
+		AdapterView.AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
+		if (mAppAdapter == null) {
+			return;
+		}
+		AppsInfo appInfo = (AppsInfo)mAppAdapter.getItem(info.position);
+		if (appInfo == null) {
+			return;
+		}
+
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.app_action_menu, menu);
+		if (menu.size() > 4) {
+			if (appInfo.type == AppsInfo.APP_INSTALLED) {
+				menu.getItem(2).setVisible(false);
+			} else {
+				menu.getItem(0).setVisible(false);
+				menu.getItem(1).setVisible(false);
+				menu.getItem(3).setVisible(false);
+			}
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+		if (mAppAdapter == null) {
+			return false;
+		}
+		AppsInfo appInfo = (AppsInfo)mAppAdapter.getItem(info.position);
+		if (appInfo == null) {
+			return false;
+		}
+
+		switch(item.getItemId()) {
+		case R.id.action_view:
+			CommonUtils.viewFile(this, FileType.FileType_App, appInfo.packageName);
+			break;
+		case R.id.action_install:
+			CommonUtils.installApp(this, appInfo.sourceDir);
+			break;
+		case R.id.action_uninstall:
+			CommonUtils.unInstallApp(this, appInfo.packageName);
+			break;
+		case R.id.action_launch:
+			CommonUtils.launchApp(this, appInfo.packageName);
+			break;
+		case R.id.action_bluetoothshare:
+			CommonUtils.shareWithBluttooth(this, appInfo.sourceDir);
+			break;
+		}
+		return true;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		if (mAppAdapter == null) {
+			return;
+		}
+		mAppAdapter.onClickItem(position);
 	}
 
 	@Override
@@ -273,6 +362,7 @@ public class AppListActivity extends IvyActivityBase implements
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mNetworkReceiver);
+		unregisterReceiver(mApkReceiver);
 	}
 
 	private class NetworkReceiver extends BroadcastReceiver {
@@ -309,6 +399,11 @@ public class AppListActivity extends IvyActivityBase implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.center_text_info:
+			if (mAppAdapter != null) {
+				mAppAdapter.disSelectAll();
+			}
+			break;
 		case R.id.left_text_info:
 			View view = LayoutInflater.from(this).inflate(R.layout.dlg_change_user_name, null);
 			final EditText mNameEditText = (EditText) view.findViewById(R.id.name);
@@ -357,7 +452,16 @@ public class AppListActivity extends IvyActivityBase implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if (resultCode == Activity.RESULT_OK) {
+    		setSelectItemText(0);
     		mAPKLoader.reLoad();
         }
+    }
+
+    public class ApkBroadcastReceiver extends BroadcastReceiver {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		setSelectItemText(0);
+    		mAPKLoader.reLoad();
+    	}
     }
 }
