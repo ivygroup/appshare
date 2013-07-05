@@ -24,7 +24,7 @@ import com.ivy.appshare.engin.im.Im.FileType;
 
 public class LocalSetting {
 	private static final String TAG = LocalSetting.class.getSimpleName();
-	private static final String LOCAL_DIR = Environment.getExternalStorageDirectory().getPath() + "/IvyShare/";
+	private static final String LOCAL_DIR = Environment.getExternalStorageDirectory().getPath() + "/IvyAppShare/";
 
 	private static LocalSetting instance = null;
     public static LocalSetting getInstance() {
