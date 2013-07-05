@@ -1,6 +1,5 @@
 package com.ivy.appshare.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -11,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.R;
 
 public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickListener {
@@ -124,5 +124,21 @@ public class AppFreeShareAdapter extends BaseAdapter implements View.OnClickList
 	            result.add(info);
 	        }
 	    }
+	}
+
+	public AppsInfo getMySelfAppInfo() {
+	    AppsInfo resultAppsInfo = null;
+	    for (AppsInfo info: mlistAppInfo) {
+	        if (info.packageName.compareToIgnoreCase(MyApplication.mPackageName) == 0) {
+	            if (resultAppsInfo == null) {
+	                resultAppsInfo = info;
+	            } else {
+	                if (resultAppsInfo.versionCode < info.versionCode) {
+	                    resultAppsInfo = info;
+	                }
+	            }
+	        }
+	    }
+	    return resultAppsInfo;
 	}
 }

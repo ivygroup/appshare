@@ -1,21 +1,26 @@
 package com.ivy.appshare.ui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -160,6 +165,69 @@ public class AppListActivity extends IvyActivityBase implements
     public void onServiceDisconnected(ComponentName name) {
 	    mIvyConnectionManager.disableHotspot();
 	    super.onServiceDisconnected(name);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.app_list, menu);
+	    return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+            case R.id.send_by_bluetooth:
+                sendMySelfByBluetooth();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+	}
+
+	private void sendMySelfByBluetooth() {
+        AppsInfo mySelfAppsInfo = mAppAdapter.getMySelfAppInfo();
+        if (mySelfAppsInfo == null || mySelfAppsInfo.sourceDir == null) {
+            return;
+        }
+
+        boolean isSupportBluetooth = false;
+        {
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            if (adapter == null) {
+                isSupportBluetooth = false;
+            } else {
+                isSupportBluetooth = true;
+            }
+        }
+
+        final boolean b = isSupportBluetooth;
+        final String str = mySelfAppsInfo.sourceDir;
+        if (isSupportBluetooth) {
+            CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
+            .setTitle(R.string.send_by_bluetooth_title)
+            .setMessage(R.string.send_by_bluetooth_message)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    sendMySelfByBluetooth(str, b);
+                }
+            })
+            .show();
+        }
+	}
+
+	private void sendMySelfByBluetooth(String mySelfAppsPath, boolean isSupportBluetooth) {
+        File sourceFile=new File(mySelfAppsPath);
+        Intent intent=new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("*/*");
+        if (isSupportBluetooth) {
+            intent.setPackage("com.android.bluetooth");
+        }
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(sourceFile));
+        startActivity(intent);
 	}
 
 	private void updateList() {

@@ -24,4 +24,8 @@
 
 	<string name="waittoreceive">Waiting for a permission ...</string>
 	<string name="sendreject">Sorry! You are not allowed to get the files from %1$s.</string>
+
+	<string name="send_by_bluetooth">Share IvyAppShare by Bluetooth</string>
+	   <string name="send_by_bluetooth_title">How to set bluetooth of your friends</string>
+    <string name="send_by_bluetooth_message">Please ask your friend open bluetooth and let discovery is checked.</string>
 </resources>
