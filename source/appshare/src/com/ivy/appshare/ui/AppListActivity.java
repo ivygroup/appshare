@@ -38,6 +38,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
@@ -196,6 +197,10 @@ public class AppListActivity extends IvyActivityBase implements
 		if (menu.size() > 4) {
 			if (appInfo.type == AppsInfo.APP_INSTALLED) {
 				menu.getItem(2).setVisible(false);
+				if (appInfo.packageName.compareTo(MyApplication.mPackageName) == 0) {
+					menu.getItem(1).setVisible(false);
+					menu.getItem(3).setVisible(false);
+				}
 			} else {
 				menu.getItem(0).setVisible(false);
 				menu.getItem(1).setVisible(false);
