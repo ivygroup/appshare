@@ -1,4 +1,4 @@
-package com.ivy.appshare.ui;
+package com.ivy.appshare.widget;
 
 import java.util.ArrayList;
 import java.util.List;

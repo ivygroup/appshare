@@ -12,7 +12,8 @@ import android.widget.BaseAdapter;
 import com.ivy.appshare.engin.control.ImManager;
 import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.engin.im.Person;
-import com.ivy.appshare.ui.FileTransWidget.MyAppInfo;
+import com.ivy.appshare.widget.FileTransWidget;
+import com.ivy.appshare.widget.FileTransWidget.MyAppInfo;
 
 public class SendListAdapter extends BaseAdapter {
     private ImManager mImManager;

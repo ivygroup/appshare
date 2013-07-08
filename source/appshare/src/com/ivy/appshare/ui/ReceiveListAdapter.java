@@ -16,6 +16,7 @@ import com.ivy.appshare.engin.control.ImManager;
 import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.utils.ImageLoader;
+import com.ivy.appshare.widget.FileTransWidget;
 
 public class ReceiveListAdapter extends BaseAdapter implements ImageLoader.LoadFinishListener {
     private static final String TAG = "ReceiveListAdapter";

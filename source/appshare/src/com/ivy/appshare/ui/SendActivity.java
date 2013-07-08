@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
-import com.ivy.appshare.engin.control.ImManager;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.control.PersonManager;
 import com.ivy.appshare.engin.control.TranslateFileControl;
@@ -58,7 +56,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
     private MessageBroadCastReceiver mMessageReceiver;
     private NetworkReceiver mNetworkReceiver;
 
-    private Person mPersonTo;
+    private SenderStatusManager mSenderStatusManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +80,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         mAdapter = new SendListAdapter(this);
         mListView.setAdapter(mAdapter);
         
-        mPersonTo = null;
+        mSenderStatusManager = new SenderStatusManager();
 
         // handler for messages
         mHandler = new Handler(this.getMainLooper()) {
@@ -137,7 +135,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                         }
                         mAdapter.notifyDataSetChanged();
                         if (mAdapter.isCompleteTranslate()) {
-                            mPersonTo = null;
+                            mSenderStatusManager.setStatus(SenderStatusManager.Status.READY);
                             changeActionBarToWaitOrSend(true, getResources().getString(R.string.waittosend), null);
                         }
                     }
@@ -209,10 +207,6 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         }
     }
 
-    private void registerNetworkReceivers() {
-    	
-    }
-
     private void registerMyReceivers() {
         if (mImManager == null) {
             return; // if no immanager, can't create receivers.
@@ -280,16 +274,18 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             Person person = PersonManager.getInstance().getPerson(personKey);
 
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
-            	if (mImManager != null && mPersonTo == null) {
-            		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_IAMHOTSPOT));
+            	if (mImManager != null && mSenderStatusManager.isReady()) {
+            		mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_IAMHOTSPOT));
+            	} else {
+            	    if (mImManager != null) {
+                        mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_ANSWERNO));
+                    }
             	}
             } else if (IvyMessages.VALUE_PERSONTYPE_SOMEONE_EXIT == type) {
-                if (mImManager != null && mPersonTo != null) {
-                    if (personKey.equals(PersonManager.getPersonKey(mPersonTo))) {
-                        mImManager.clearAllFileTranslates();
-                        mPersonTo = null;
-                        changeActionBarToWaitOrSend(true, getResources().getString(R.string.waittosend), null);
-                    }
+                if (mImManager != null && mSenderStatusManager.canEndCurrentWorkSession(person)) {
+                    mSenderStatusManager.setStatus(SenderStatusManager.Status.READY);
+                    mImManager.clearAllFileTranslates();
+                    changeActionBarToWaitOrSend(true, getResources().getString(R.string.waittosend), null);
                 }
             }
         }
@@ -302,24 +298,27 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                 .setTitle(R.string.requestsendtitle)
                 .setMessage(getResources().getString(R.string.requestsendmessage, person.mNickName))
                 .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialog,int which) {
 	                        changeActionBarToWaitOrSend(false, getResources().getString(R.string.sendto), person.mNickName);
 
 	                    	if (mImManager != null) {
-	                    		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_ANSWERYES));
+	                    		mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_ANSWERYES));
 	                    	}
 
 	                        mAdapter.beginTranslate(mImManager, person);
-	                        mPersonTo = person;
+	                        mSenderStatusManager.setToPersonForWorking(person);
+	                        mSenderStatusManager.setStatus(SenderStatusManager.Status.WORKING);
 	                    }
 	                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 	                    @Override
 	                    public void onClick(DialogInterface dialog,int which) {
 	                    	if (mImManager != null) {
-	                    		mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_ANSWERNO));
+	                    		mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_ANSWERNO));
 	                    	}
+	                    	mSenderStatusManager.setStatus(SenderStatusManager.Status.READY);
 	                    }
 	                }).create();
         alertDialog.show();
@@ -327,7 +326,14 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 
     private void processInnerMessage(Person person, int msgType) {
     	switch (msgType) {
-    		case ImManager.IVY_APP_REQUEST:
+    		case IvyInnerMessage.IVY_APP_REQUEST:
+    		    if (!mSenderStatusManager.isReady()) {
+    		        if (mImManager != null) {
+                        mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_ANSWERNO));
+                    }
+    		        return;
+    		    }
+    		    mSenderStatusManager.setStatus(SenderStatusManager.Status.ASKDLG);
     			askIfSendToThisPerson(person);
     		break;
     	}
@@ -346,9 +352,10 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             Person person = PersonManager.getInstance().getPerson(personKey);
 
             if (fileType == FileType.FileType_CommonMsg.ordinal()) {
-            	int ret = ImManager.parseIvyInnerMessage(filename);
+            	int ret = IvyInnerMessage.parseIvyInnerMessage(filename);
             	if ( ret != -1) {
             		processInnerMessage(person, ret);
+            		return;
             	}
             }
 
@@ -379,6 +386,9 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                 int state = intent.getIntExtra(IvyMessages.PARAMETER_NETWORK_STATECHANGE_STATE, 0);
                 String ssid = intent.getStringExtra(IvyMessages.PARAMETER_NETWORK_STATECHANGE_SSID);
 
+                if (state == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
+                    mSenderStatusManager.setStatus(SenderStatusManager.Status.READY);
+                }
                 mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_NETWORK_STATE_CHANGED, type, state, ssid));
 
             } else if (action.equals(IvyMessages.INTENT_NETWORK_FINISHSCANIVYROOM)) {

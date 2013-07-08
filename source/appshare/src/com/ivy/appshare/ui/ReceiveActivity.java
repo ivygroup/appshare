@@ -268,17 +268,17 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
 
     private void processInnerMessage(Person person, int msgType) {
     	switch (msgType) {
-    		case ImManager.IVY_APP_IAMHOTSPOT:
+    		case IvyInnerMessage.IVY_APP_IAMHOTSPOT:
     			if (mImManager != null) {
-    				mImManager.sendMessage(person, ImManager.getIvyInnerMessage(ImManager.IVY_APP_REQUEST));
+    				mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_REQUEST));
     			}
     			break;
-    		case ImManager.IVY_APP_ANSWERYES:
+    		case IvyInnerMessage.IVY_APP_ANSWERYES:
                 switchBarAndToPerson(false);
                 mCenterTextView.setText(getResources().getString(R.string.from));
                 mRightTextView.setText(person.mNickName);
     			break;
-    		case ImManager.IVY_APP_ANSWERNO:
+    		case IvyInnerMessage.IVY_APP_ANSWERNO:
     			Toast.makeText(this, getResources().getString(R.string.sendreject, person.mNickName), Toast.LENGTH_SHORT).show();
     			finish();
     			break;
@@ -297,7 +297,7 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
             Person person = PersonManager.getInstance().getPerson(personKey);
 
             if (fileType == FileType.FileType_CommonMsg.ordinal()) {
-            	int ret = ImManager.parseIvyInnerMessage(filename);
+            	int ret = IvyInnerMessage.parseIvyInnerMessage(filename);
             	if ( ret != -1) {
             		processInnerMessage(person, ret);
             	}
