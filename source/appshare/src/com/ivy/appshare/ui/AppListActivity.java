@@ -48,7 +48,7 @@ import com.ivy.appshare.utils.CommonUtils;
 import com.ivy.appshare.utils.IvyActivityBase;
 
 public class AppListActivity extends IvyActivityBase implements
-		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener,
+		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener, View.OnLongClickListener,
 		AdapterView.OnItemClickListener{
 
 	private AppFreeShareAdapter mAppAdapter = null;
@@ -92,6 +92,7 @@ public class AppListActivity extends IvyActivityBase implements
 				.findViewById(R.id.center_text_info));
 		mTextSelected.setVisibility(View.VISIBLE);
 		mTextSelected.setOnClickListener(this);
+		mTextSelected.setOnLongClickListener(this);
 		setSelectItemText(0);
 
 		mTextLeft = ((TextView) actionbar.findViewById(R.id.left_text_info));
@@ -99,11 +100,13 @@ public class AppListActivity extends IvyActivityBase implements
 
 		mTextLeft.setText(mLocalSetting.getMySelf().mNickName);
 		mTextLeft.setOnClickListener(this);
+		mTextLeft.setOnLongClickListener(this);
 
 		mButtonRight = ((ImageButton) actionbar.findViewById(R.id.btn_right));
 		mButtonRight.setImageResource(R.drawable.ic_select_send);
 		mButtonRight.setVisibility(View.VISIBLE);
 		mButtonRight.setOnClickListener(this);
+		mButtonRight.setOnLongClickListener(this);
 
 		mShareData = new ArrayList<String>();
 		mAdapter = new ArrayAdapter<String>(this,
@@ -469,4 +472,22 @@ public class AppListActivity extends IvyActivityBase implements
     		mAPKLoader.reLoad();
     	}
     }
+
+	@Override
+	public boolean onLongClick(View v) {
+		int toastTextId = 0;
+		switch (v.getId()) {
+		case R.id.center_text_info:
+			toastTextId = R.string.toast_unselect;
+			break;
+		case R.id.left_text_info:
+			toastTextId = R.string.toast_rename;
+			break;
+		case R.id.btn_right:
+			toastTextId = R.string.toast_send;
+			break;
+		}
+		Toast.makeText(this, toastTextId, Toast.LENGTH_SHORT).show();
+		return false;
+	}
 }

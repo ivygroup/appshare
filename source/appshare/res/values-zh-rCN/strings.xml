@@ -34,4 +34,8 @@
     <string name="app_action_launch">启动</string>
     <string name="app_action_uninstall">卸载</string>
     <string name="app_action_bluetoothshare">蓝牙共享</string>
+
+    <string name="toast_send">发送</string>
+    <string name="toast_rename">修改名称</string>
+    <string name="toast_unselect">取消选择</string>
 </resources>

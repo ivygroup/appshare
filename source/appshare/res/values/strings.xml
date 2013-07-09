@@ -34,4 +34,8 @@
 	<string name="app_action_launch">Launch</string>
 	<string name="app_action_uninstall">UnInstalled</string>
 	<string name="app_action_bluetoothshare">Share by Bluetooth</string>
+
+    <string name="toast_send">Send</string>
+    <string name="toast_rename">Change name</string>
+    <string name="toast_unselect">Unselect all</string>
 </resources>
