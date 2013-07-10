@@ -225,22 +225,6 @@ public class AppListActivity extends IvyActivityBase implements
 
 		switch(item.getItemId()) {
 		case R.id.action_view:
-		{
-		    Intent intent = new Intent();
-            intent.setClass(this, QuickAppInfoActivity.class);
-
-            BitmapDrawable bd = (BitmapDrawable)appInfo.appIcon;
-            Bitmap bm = bd.getBitmap();
-            intent.putExtra("image", bm);
-            intent.putExtra("name", appInfo.appLabel);
-            intent.putExtra("packagename", appInfo.packageName);
-            intent.putExtra("version", appInfo.versionName);
-            intent.putExtra("sourcedir", appInfo.sourceDir);
-
-            startActivity(intent);
-		}
-			break;
-		case R.id.action_installinfo:
 		    CommonUtils.viewFile(this, FileType.FileType_App, appInfo.packageName);
 		    break;
 		case R.id.action_install:
@@ -259,6 +243,22 @@ public class AppListActivity extends IvyActivityBase implements
 		case R.id.action_bluetoothshare:
 			CommonUtils.shareWithBluttooth(this, appInfo.sourceDir);
 			break;
+	     case R.id.action_property:
+	        {
+	            Intent intent = new Intent();
+	            intent.setClass(this, QuickAppInfoActivity.class);
+
+	            BitmapDrawable bd = (BitmapDrawable)appInfo.appIcon;
+	            Bitmap bm = bd.getBitmap();
+	            intent.putExtra("image", bm);
+	            intent.putExtra("name", appInfo.appLabel);
+	            intent.putExtra("packagename", appInfo.packageName);
+	            intent.putExtra("version", appInfo.versionName);
+	            intent.putExtra("sourcedir", appInfo.sourceDir);
+
+	            startActivity(intent);
+	        }
+	            break;
 		}
 		return true;
 	}

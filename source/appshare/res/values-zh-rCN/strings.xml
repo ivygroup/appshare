@@ -29,13 +29,13 @@
 	
 	<string name="haveinstalled">已安装</string>
 
-    <string name="app_action_view">查看位置信息</string>
-    <string name="app_action_installinfo">查看安装信息</string>
+    <string name="app_action_view">查看</string>
     <string name="app_action_install">安装</string>
     <string name="app_action_launch">启动</string>
     <string name="app_action_uninstall">卸载</string>
     <string name="app_action_delete">删除</string>
     <string name="app_action_bluetoothshare">蓝牙共享</string>
+    <string name="app_action_property">属性</string>
 
     <string name="toast_send">发送</string>
     <string name="toast_rename">修改名称</string>
@@ -43,5 +43,5 @@
 
     <string name="packagename">包名</string>
     <string name="version">版本</string>
-    <string name="sourcedir">文件路径</string>
+    <string name="sourcedir">路径</string>
 </resources>
