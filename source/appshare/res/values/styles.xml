@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<!--
         Base application theme, dependent on API level. This theme is replaced
@@ -17,4 +17,26 @@
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 	</style>
 
+    <style name="Theme.NoTitle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="quick_person_info_textview">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">right|center</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:textSize">@dimen/listbar_secondray_textsize</item>
+        <item name="android:textColor">@color/listbar_secondray</item>
+    </style>
+
+    <style name="quick_person_relativelayout">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/quick_person_info_textview_height</item>
+    </style>
 </resources>

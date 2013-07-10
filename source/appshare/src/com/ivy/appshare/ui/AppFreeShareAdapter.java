@@ -44,6 +44,11 @@ public class AppFreeShareAdapter extends BaseAdapter {
 		return position;
 	}
 
+	public void removeItem(int position) {
+	    mlistAppInfo.remove(position);
+	    notifyDataSetChanged();
+	}
+
 	@Override
 	public View getView(int position, View convertview, ViewGroup arg2) {
 		View view = null;

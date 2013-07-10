@@ -48,6 +48,11 @@
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
+        <activity
+            android:name="com.ivy.appshare.ui.QuickAppInfoActivity"
+            android:theme="@style/Theme.NoTitle" >
+        </activity>
+
         <service
             android:name="com.ivy.appshare.engin.IvyService"
             android:exported="false" >

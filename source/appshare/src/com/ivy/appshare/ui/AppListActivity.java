@@ -12,11 +12,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.ContactsContract.CommonDataKinds.Im;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.util.Log;
@@ -195,20 +199,16 @@ public class AppListActivity extends IvyActivityBase implements
 			return;
 		}
 
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.app_action_menu, menu);
-		if (menu.size() > 4) {
-			if (appInfo.type == AppsInfo.APP_INSTALLED) {
-				menu.getItem(2).setVisible(false);
-				if (appInfo.packageName.compareTo(MyApplication.mPackageName) == 0) {
-					menu.getItem(1).setVisible(false);
-					menu.getItem(3).setVisible(false);
-				}
-			} else {
-				menu.getItem(0).setVisible(false);
-				menu.getItem(1).setVisible(false);
-				menu.getItem(3).setVisible(false);
-			}
+		if (appInfo.type == AppsInfo.APP_INSTALLED) {
+		    MenuInflater inflater = getMenuInflater();
+	        inflater.inflate(R.menu.app_action_menu_installed, menu);
+            if (appInfo.packageName.compareTo(MyApplication.mPackageName) == 0) {
+                menu.getItem(1).setVisible(false);
+                menu.getItem(2).setVisible(false);
+            }
+		} else {
+		    MenuInflater inflater = getMenuInflater();
+	        inflater.inflate(R.menu.app_action_menu_uninstalled, menu);
 		}
 	}
 
@@ -225,17 +225,37 @@ public class AppListActivity extends IvyActivityBase implements
 
 		switch(item.getItemId()) {
 		case R.id.action_view:
-			CommonUtils.viewFile(this, FileType.FileType_App, appInfo.packageName);
+		{
+		    Intent intent = new Intent();
+            intent.setClass(this, QuickAppInfoActivity.class);
+
+            BitmapDrawable bd = (BitmapDrawable)appInfo.appIcon;
+            Bitmap bm = bd.getBitmap();
+            intent.putExtra("image", bm);
+            intent.putExtra("name", appInfo.appLabel);
+            intent.putExtra("packagename", appInfo.packageName);
+            intent.putExtra("version", appInfo.versionName);
+            intent.putExtra("sourcedir", appInfo.sourceDir);
+
+            startActivity(intent);
+		}
 			break;
+		case R.id.action_installinfo:
+		    CommonUtils.viewFile(this, FileType.FileType_App, appInfo.packageName);
+		    break;
 		case R.id.action_install:
 			CommonUtils.installApp(this, appInfo.sourceDir);
 			break;
 		case R.id.action_uninstall:
-			CommonUtils.unInstallApp(this, appInfo.packageName);
+			CommonUtils.unInstallAppAsync(this, appInfo.packageName, appInfo.sourceDir);
 			break;
 		case R.id.action_launch:
 			CommonUtils.launchApp(this, appInfo.packageName);
 			break;
+		case R.id.action_delete:
+		    mAppAdapter.removeItem(info.position);
+		    CommonUtils.deleteFile(appInfo.sourceDir);
+		    break;
 		case R.id.action_bluetoothshare:
 			CommonUtils.shareWithBluttooth(this, appInfo.sourceDir);
 			break;

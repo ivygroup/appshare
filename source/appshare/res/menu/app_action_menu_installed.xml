@@ -1,16 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-	<item
-		android:id="@+id/action_view"
+    <item
+        android:id="@+id/action_view"
         android:title="@string/app_action_view"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_installinfo"
+        android:title="@string/app_action_installinfo"
         android:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_launch"
         android:title="@string/app_action_launch"
-        android:showAsAction="ifRoom|withText" />
-    <item
-        android:id="@+id/action_install"
-        android:title="@string/app_action_install"
         android:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_uninstall"
@@ -20,4 +20,5 @@
         android:id="@+id/action_bluetoothshare"
         android:title="@string/app_action_bluetoothshare"
         android:showAsAction="ifRoom|withText" />
+
 </menu>

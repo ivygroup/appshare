@@ -1,6 +1,7 @@
 package com.ivy.appshare.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -273,6 +274,16 @@ public class CommonUtils {
         context.startActivity(intent);
 	}
 
+	public static void unInstallAppAsync(Context context, String packageName, String sourceDir) {
+	    CopyAndUninstallApp instance = new CopyAndUninstallApp(context, packageName, sourceDir);
+	    instance.start();
+	}
+
+	public static void deleteFile(String filePath) {
+	    File file = new File(filePath);
+	    boolean a = file.delete();
+	}
+
 	public static void launchApp(Context context, String packageName) {
 		Intent intent = context.getPackageManager().
 				getLaunchIntentForPackage(packageName);
@@ -319,5 +330,52 @@ public class CommonUtils {
 		op.inJustDecodeBounds = false;
 		bmp = BitmapFactory.decodeFile(path, op);
 		return bmp;
+	}
+	
+	
+	private static class CopyAndUninstallApp extends Thread {
+	    private Context mContext;
+	    private String mPackageName;
+	    private String mSourceDir;
+	    
+	    public CopyAndUninstallApp(Context context, String packageName, String sourceDir) {
+	        mContext = context;
+	        mPackageName = packageName;
+	        mSourceDir = sourceDir;
+	    }
+	    
+	    @Override
+	    public void run() {
+	        String tmp = mSourceDir.substring(mSourceDir.lastIndexOf("/")+1);
+	        String dest = LocalSetting.getInstance().getLocalFileReceivePath(FileType.FileType_App) + "/" + tmp;
+	        File fileSrc = new File(mSourceDir);
+	        File fileDest = new File(dest);
+	        if (!fileDest.exists()) {
+    	        try {
+    	            forJavaCp(fileSrc, fileDest);
+    	        } catch (Exception e) {
+                    Log.e(TAG, "When copy file occour a Error,  " + e.getMessage() + ".  source file = " + mSourceDir);
+                }
+	        }
+
+	        unInstallApp(mContext, mPackageName);
+	    }
+	    
+	    public static void forJavaCp(File f1,File f2) throws Exception {
+	        int length=2097152;    // 2M
+	        FileInputStream in=new FileInputStream(f1);
+	        FileOutputStream out=new FileOutputStream(f2);
+	        byte[] buffer=new byte[length];
+	        while(true) {
+	            int ins = in.read(buffer);
+	            if(ins ==-1) {
+	                in.close();
+	                out.flush();
+	                out.close();
+	                return;
+	            } else
+	                out.write(buffer,0,ins);
+	        }
+	    }
 	}
 }

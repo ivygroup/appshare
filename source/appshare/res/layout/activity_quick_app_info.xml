@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2011 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:background="@drawable/background_holo_light"
+    android:orientation = "vertical" 
+    android:padding="10dp">
+    
+    <!-- icon and appLabel-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal"
+        >
+    
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="1dp"
+            android:background="@drawable/menu_box_white_gray_normal"   
+            android:src="@drawable/ic_contact_picture" />
+
+        <TextView
+                android:id="@+id/name"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/listbar_main"
+                android:textSize="@dimen/listbar_main_textsize"/>
+    </LinearLayout>
+    
+    <!-- package name-->
+    <RelativeLayout
+        android:background="@drawable/listbar_top_selector"
+        android:layout_marginTop="18dp"
+        style="@style/quick_person_relativelayout" >
+        <TextView
+            android:id="@+id/packagename_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:text="@string/packagename"
+            android:textColor="@color/listbar_main"
+            android:textSize="@dimen/listbar_main_textsize" />
+        <TextView
+            android:id="@+id/packagename"
+            android:layout_toRightOf="@id/packagename_lable"
+            style="@style/quick_person_info_textview"/>
+    </RelativeLayout>
+    
+    <FrameLayout
+        android:background="@drawable/listbar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
+    <!-- version -->
+    <RelativeLayout
+        android:background="@drawable/listbar_middle_selector"
+        style="@style/quick_person_relativelayout" >
+        <TextView
+            android:id="@+id/version_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:text="@string/version"
+            android:textColor="@color/listbar_main"
+            android:textSize="@dimen/listbar_main_textsize" />
+        <TextView
+            android:id="@+id/version"
+            android:layout_toRightOf="@id/version_lable"
+            style="@style/quick_person_info_textview"/>
+    </RelativeLayout>
+    
+    <FrameLayout
+        android:background="@drawable/listbar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- source dir -->
+    <RelativeLayout
+        android:background="@drawable/listbar_bottom_selector"
+        style="@style/quick_person_relativelayout" >
+        <TextView
+            android:id="@+id/sourcedir_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:text="@string/sourcedir"
+            android:textColor="@color/listbar_main"
+            android:textSize="@dimen/listbar_main_textsize" />
+        <TextView
+            android:id="@+id/sourcedir"
+            android:layout_toRightOf="@id/sourcedir_lable"
+            style="@style/quick_person_info_textview"/>
+
+    </RelativeLayout>
+</LinearLayout>

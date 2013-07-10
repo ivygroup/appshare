@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/action_view"
+        android:title="@string/app_action_view"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_install"
+        android:title="@string/app_action_install"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_delete"
+        android:title="@string/app_action_delete"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_bluetoothshare"
+        android:title="@string/app_action_bluetoothshare"
+        android:showAsAction="ifRoom|withText" />
+</menu>
