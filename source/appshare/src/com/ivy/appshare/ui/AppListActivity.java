@@ -1,9 +1,11 @@
 package com.ivy.appshare.ui;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -14,23 +16,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.ContactsContract.CommonDataKinds.Im;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -48,14 +50,16 @@ import com.ivy.appshare.engin.constdefines.IvyMessages;
 import com.ivy.appshare.engin.control.LocalSetting;
 import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.utils.APKLoader;
+import com.ivy.appshare.utils.APKLoader.ApkLoaderDataChang;
 import com.ivy.appshare.utils.CommonUtils;
 import com.ivy.appshare.utils.IvyActivityBase;
 
 public class AppListActivity extends IvyActivityBase implements
 		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener, View.OnLongClickListener,
-		AdapterView.OnItemClickListener{
+		AdapterView.OnItemClickListener, ApkLoaderDataChang {
 
 	private AppFreeShareAdapter mAppAdapter = null;
+	private AppsInfo mMySelfAppsInfo;
 	private APKLoader mAPKLoader = null;
 	private GridView mAppGridView = null;
 	private TextView mTextSelected;
@@ -87,6 +91,8 @@ public class AppListActivity extends IvyActivityBase implements
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_app_list);
+
+		mMySelfAppsInfo = null;
 
 		mLocalSetting = LocalSetting.getInstance();
 		mNetworkReceiver = new NetworkReceiver();
@@ -147,11 +153,10 @@ public class AppListActivity extends IvyActivityBase implements
 		});
 
 		mAPKLoader = new APKLoader();
-		mAPKLoader.init(this);
+		mAPKLoader.init(this, this);
 
 		mAppGridView = (GridView) findViewById(R.id.gridview);
-		mAppAdapter = new AppFreeShareAdapter(this, mAPKLoader.getAppList(),
-				this);
+		mAppAdapter = new AppFreeShareAdapter(this, this);
 
 		mAppGridView.setAdapter(mAppAdapter);
 		mAPKLoader.setAdapter(mAppAdapter);
@@ -175,6 +180,8 @@ public class AppListActivity extends IvyActivityBase implements
 
 		mApkReceiver = new ApkBroadcastReceiver();
 		registerApkReceiver();
+
+		registerNfcPushFeature();
 	}
 
 	private void registerApkReceiver() {
@@ -184,6 +191,22 @@ public class AppListActivity extends IvyActivityBase implements
     	filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
     	filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
     	registerReceiver(mApkReceiver, filter);
+	}
+
+	@SuppressLint("NewApi")
+    private void registerNfcPushFeature() {
+	    int current_version = Build.VERSION.SDK_INT;
+	    if (current_version >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // 14. android 4.0
+	        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+	        if (nfcAdapter != null) {
+	            // nfcAdapter.setNdefPushMessageCallback(new PushNfcMessage(), this);
+
+	            // Uri uri1 = Uri.parse("file://" + mMySelfAppsInfo.sourceDir);
+	            // nfcAdapter.setBeamPushUris(new Uri[]{uri1}, this);
+
+	            nfcAdapter.setBeamPushUrisCallback(new CreateBeamUrisForMySelf(), this);
+	        }
+	    }
 	}
 
 	@Override
@@ -304,7 +327,7 @@ public class AppListActivity extends IvyActivityBase implements
 	}
 
 	private void sendMySelfByBluetooth() {
-        AppsInfo mySelfAppsInfo = mAppAdapter.getMySelfAppInfo();
+        AppsInfo mySelfAppsInfo = mMySelfAppsInfo;
         if (mySelfAppsInfo == null || mySelfAppsInfo.sourceDir == null) {
             return;
         }
@@ -510,4 +533,30 @@ public class AppListActivity extends IvyActivityBase implements
 		Toast.makeText(this, toastTextId, Toast.LENGTH_SHORT).show();
 		return false;
 	}
+
+    @Override
+    public void apkDataChanged(List<AppsInfo> data) {
+        if (mAppAdapter != null) {
+            mAppAdapter.setData(data);
+            mAppAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void mySelfLoaded(AppsInfo info) {
+        mMySelfAppsInfo = info;
+    }
+
+
+    private class CreateBeamUrisForMySelf implements NfcAdapter.CreateBeamUrisCallback {
+
+        @Override
+        public Uri[] createBeamUris(NfcEvent arg0) {
+            if (mMySelfAppsInfo == null) {
+                return null;
+            }
+            Uri uri1 = Uri.parse("file://" + mMySelfAppsInfo.sourceDir);
+            return new Uri[]{uri1};
+        }
+    }
 }

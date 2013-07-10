@@ -23,19 +23,29 @@ public class AppFreeShareAdapter extends BaseAdapter {
 		public void onSelectedChanged();
 	}
 
-	public AppFreeShareAdapter(Context c, List<AppsInfo> apps, SelectChangeListener listener) {
+	public AppFreeShareAdapter(Context c, SelectChangeListener listener) {
 		mContext = c;
-		mlistAppInfo = apps;
+		mlistAppInfo = null;
 		mListener = listener;
+	}
+
+	public void setData(List<AppsInfo> data) {
+	    mlistAppInfo = data;
 	}
 
 	@Override
 	public int getCount() {
+	    if (mlistAppInfo == null) {
+	        return 0;
+	    }
 		return mlistAppInfo.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
+	    if (mlistAppInfo == null) {
+            return null;
+        }
 		return mlistAppInfo.get(position);
 	}
 
@@ -45,12 +55,19 @@ public class AppFreeShareAdapter extends BaseAdapter {
 	}
 
 	public void removeItem(int position) {
+	    if (mlistAppInfo == null) {
+            return;
+        }
 	    mlistAppInfo.remove(position);
 	    notifyDataSetChanged();
 	}
 
 	@Override
 	public View getView(int position, View convertview, ViewGroup arg2) {
+	    if (mlistAppInfo == null) {
+            return null;
+        }
+
 		View view = null;
 		ViewHolder holder = null;
 		if (convertview == null || convertview.getTag() == null) {

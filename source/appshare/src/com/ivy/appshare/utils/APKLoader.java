@@ -43,12 +43,21 @@ public class APKLoader {
     private Drawable mDefaultDrawable;
     private BaseAdapter mAdapter;
     private Context mContext;
+    private ApkLoaderDataChang mApkLoaderDataChang;
+
+
+    public interface ApkLoaderDataChang {
+        public void apkDataChanged(List<AppsInfo> data);
+        public void mySelfLoaded(AppsInfo info);
+    }
+
 
     public APKLoader() {
     }
 
-    public void init(Context context) {
+    public void init(Context context, ApkLoaderDataChang apkLoaderDataChang) {
     	mContext = context;
+    	mApkLoaderDataChang = apkLoaderDataChang;
         mDefaultDrawable = mContext.getResources().getDrawable(R.drawable.ic_file_type_apk);
 
         mMapAppPackageVersion = new HashMap<String, Set<Integer>>();
@@ -69,6 +78,9 @@ public class APKLoader {
                 }
                 if (app.packageName.compareToIgnoreCase(MyApplication.mPackageName) == 0) {
                     mListAppInfo.add(0, app);
+                    if (mApkLoaderDataChang != null) {
+                        mApkLoaderDataChang.mySelfLoaded(app);
+                    }
                 } else {
                 	int nSize = mListAppInfo.size();
                 	int nPos = 0;
@@ -85,8 +97,8 @@ public class APKLoader {
                 	}
                 	mListAppInfo.add(nPos, app);
                 }
-                if (mAdapter != null) {
-                    mAdapter.notifyDataSetChanged();
+                if (mApkLoaderDataChang != null) {
+                    mApkLoaderDataChang.apkDataChanged(new ArrayList<AppsInfo>(mListAppInfo));
                 }
             }
         };
@@ -119,10 +131,6 @@ public class APKLoader {
 
     public void setAdapter(BaseAdapter adapter) {
     	mAdapter = adapter;
-    }
-
-    public List<AppsInfo> getAppList() {
-    	return mListAppInfo;
     }
 
     private int compareApkVersion(AppsInfo app) {
