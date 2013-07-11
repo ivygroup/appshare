@@ -118,6 +118,17 @@ public class ImSetting {
         setPersonalInfo(db, Table_Setting.TRACEACTION, String.valueOf(b));
         db.close();
     }
+    public boolean getNfcPopupWindow() {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        boolean b = Boolean.valueOf(getPersonalInfo(db, Table_Setting.NFCPOPUPWINDOW, "true"));
+        db.close();
+        return b;
+    }
+    public void setNfcPopupWindow(boolean b) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        setPersonalInfo(db, Table_Setting.NFCPOPUPWINDOW, String.valueOf(b));
+        db.close();
+    }
 
 
     private void setPersonalInfo(SQLiteDatabase db, String key, String value) {

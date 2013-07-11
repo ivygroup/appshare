@@ -44,4 +44,12 @@
     <string name="packagename">包名</string>
     <string name="version">版本</string>
     <string name="sourcedir">路径</string>
+
+    <string name="delete_confirm">确认删除</string>
+    <string name="areyousure_delete">你确定要删除 %1$s 吗?</string>
+
+    <string name="tiptext">亲,新版本加入了NFC共享自己的功能\n\n只要打开你手机的NFC功能,并且背靠背手机,可以轻松发送本应用给你的好友哦!</string>
+    <string name="setnfc">打开NFC功能</string>
+    <string name="nextifnotify">下次不再提醒</string>
+    <string name="iknown">我知道了</string>
 </resources>

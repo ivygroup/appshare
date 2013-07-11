@@ -1,7 +1,6 @@
 package com.ivy.appshare.ui;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +15,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
@@ -28,19 +26,27 @@ import android.os.IBinder;
 import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Checkable;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +72,7 @@ public class AppListActivity extends IvyActivityBase implements
 	private ImageButton mButtonRight;
 	private TextView mTextLeft;
 	private ListView mSharedPersonList;
+	private PopupWindow mPopupWindowNfcTip;
 
 	private LocalSetting mLocalSetting;
 	private Handler mHandler;
@@ -81,6 +88,7 @@ public class AppListActivity extends IvyActivityBase implements
 	private static final int MESSAGE_NETWORK_CLEAR_IVYROOM = 1;
 	private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P = 2;
 	private static final int MESSAGE_NETWORK_STATE_CHANGED = 3;
+	private static final int MESSAGE_UI_SHOW_NFCTIP_WINDOW = 10;
 	private NetworkReceiver mNetworkReceiver = null;
 	
 	private static final int REQUEST_RECEIVE_APP = 0;
@@ -171,6 +179,10 @@ public class AppListActivity extends IvyActivityBase implements
 				case MESSAGE_NETWORK_SCAN_FINISH:
 					updateList();
 					break;
+
+				case MESSAGE_UI_SHOW_NFCTIP_WINDOW:
+				    mPopupWindowNfcTip.showAtLocation(findViewById(R.id.layout), Gravity.BOTTOM, 0, 0);
+				    break;
 				}
 				super.handleMessage(msg);
 			}
@@ -196,7 +208,7 @@ public class AppListActivity extends IvyActivityBase implements
 	@SuppressLint("NewApi")
     private void registerNfcPushFeature() {
 	    int current_version = Build.VERSION.SDK_INT;
-	    if (current_version >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // 14. android 4.0
+	    if (current_version >= Build.VERSION_CODES.JELLY_BEAN) { // 16.
 	        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 	        if (nfcAdapter != null) {
 	            // nfcAdapter.setNdefPushMessageCallback(new PushNfcMessage(), this);
@@ -260,8 +272,22 @@ public class AppListActivity extends IvyActivityBase implements
 			CommonUtils.launchApp(this, appInfo.packageName);
 			break;
 		case R.id.action_delete:
-		    mAppAdapter.removeItem(info.position);
-		    CommonUtils.deleteFile(appInfo.sourceDir);
+		{
+		    final int position = info.position;
+		    final String sourceDir = appInfo.sourceDir;
+		    CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
+            .setTitle(R.string.delete_confirm)
+            .setMessage(getResources().getString(R.string.areyousure_delete, appInfo.appLabel))
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mAppAdapter.removeItem(position);
+                    CommonUtils.deleteFile(sourceDir);
+                }
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+		}
 		    break;
 		case R.id.action_bluetoothshare:
 			CommonUtils.shareWithBluttooth(this, appInfo.sourceDir);
@@ -416,6 +442,15 @@ public class AppListActivity extends IvyActivityBase implements
 		unregisterReceiver(mApkReceiver);
 	}
 
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+	    super.onWindowFocusChanged(hasFocus);
+
+	    if (hasFocus) {
+	        initPopuptWindow();
+	    }
+	}
+
 	private class NetworkReceiver extends BroadcastReceiver {
 
 		@Override
@@ -558,5 +593,85 @@ public class AppListActivity extends IvyActivityBase implements
             Uri uri1 = Uri.parse("file://" + mMySelfAppsInfo.sourceDir);
             return new Uri[]{uri1};
         }
+    }
+
+
+    @SuppressLint("NewApi")
+    private void initPopuptWindow() {
+        int current_version = Build.VERSION.SDK_INT;
+        if (current_version < Build.VERSION_CODES.JELLY_BEAN) { // 16.
+            return;
+        }
+
+        boolean canShowNfcPopuWindow = LocalSetting.getInstance().getNfcPopupWindow();
+        if (!canShowNfcPopuWindow) {
+            return;
+        } //*/
+
+        if (mPopupWindowNfcTip != null) {
+            return;
+        }
+
+        View popupWindow_view = getLayoutInflater().inflate(R.layout.popupwindow_nfctip, null,false);
+
+      //获取屏幕和对话框各自高宽
+        int screenWidth = AppListActivity.this.getWindowManager().getDefaultDisplay().getWidth();
+        int screenHeight = AppListActivity.this.getWindowManager().getDefaultDisplay().getHeight();
+
+        mPopupWindowNfcTip = new PopupWindow(popupWindow_view, screenWidth, screenHeight/3, true);
+        mPopupWindowNfcTip.setBackgroundDrawable(new BitmapDrawable());
+        mPopupWindowNfcTip.setAnimationStyle(R.style.PopupAnimation);
+
+        Button bt_setnfc = (Button)popupWindow_view.findViewById(R.id.bt_setnfc);
+        Button bt_cancle = (Button)popupWindow_view.findViewById(R.id.bt_cancle);
+
+        bt_setnfc.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent intent = null;
+                /* if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    intent = new Intent(android.provider.Settings.ACTION_NFC_SETTINGS);
+                } else if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    intent = new Intent();
+                    ComponentName component = new ComponentName("com.android.settings","com.android.settings.WirelessSettings");
+                    intent.setComponent(component);
+                    intent.setAction("android.intent.action.VIEW");
+                } else {
+                    // can't run this branch.
+                }  //*/
+                intent = new Intent(android.provider.Settings.ACTION_NFC_SETTINGS);
+                startActivity(intent);
+
+                mPopupWindowNfcTip.dismiss();
+            }
+        });
+
+        bt_cancle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupWindowNfcTip.dismiss();
+            }
+        });
+
+        final CheckBox cb_shownext = (CheckBox)popupWindow_view.findViewById(R.id.checkbox);
+        cb_shownext.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LocalSetting.getInstance().saveNfcPopupWindow(!isChecked);
+            }
+        });
+
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (nfcAdapter != null) {
+            if (nfcAdapter.isEnabled()) {
+                bt_setnfc.setVisibility(View.GONE);
+            } else {
+                bt_setnfc.setVisibility(View.VISIBLE);
+            }
+        }
+
+        // mHandler.sendEmptyMessageDelayed(MESSAGE_UI_SHOW_NFCTIP_WINDOW, 200);
+        mHandler.sendEmptyMessage(MESSAGE_UI_SHOW_NFCTIP_WINDOW);
     }
 }

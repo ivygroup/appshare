@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ab_solid_custom_blue_inverse_holo"
+    android:orientation="vertical" >
+
+	<TextView
+	    android:id="@+id/tv_tip"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	    android:gravity="center"
+	    android:textSize="16sp"
+	    android:text="@string/tiptext" />
+	
+
+    <Button
+        android:id="@+id/bt_setnfc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/setnfc" />
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center" >
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:text="@string/nextifnotify"/>
+	    
+	    <Button
+	        android:id="@+id/bt_cancle"
+	        android:layout_width="0dp"
+            android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:text="@string/iknown" />
+	</LinearLayout>
+
+</LinearLayout>

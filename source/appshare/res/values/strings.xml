@@ -44,4 +44,12 @@
 	<string name="packagename">Package name</string>
     <string name="version">Version</string>
     <string name="sourcedir">Path</string>
+
+    <string name="delete_confirm">confirm delete</string>
+    <string name="areyousure_delete">Are you sure delete %1$s ?</string>
+
+    <string name="tiptext">Hi, My dear friend, the newest version has add NFC translate.\n\nYou can translate share-appks to your friend only opened your nfc and touch each other!</string>
+    <string name="setnfc">Open NFC</string>
+    <string name="nextifnotify">Not remind next time</string>
+    <string name="iknown">I known</string>
 </resources>

@@ -19,6 +19,7 @@ public interface Table_Setting extends BaseColumns {
     public static final String VIBRATE = "vibrate";
     public static final String FIRSTTIME = "firsttime";
     public static final String TRACEACTION = "traceaction";
+    public static final String NFCPOPUPWINDOW = "nfcpopupwindow";
 
     // public static final String PORT = "port";
     // public static final String NETWORKCODING = "networkcoding";

@@ -19,8 +19,8 @@ import android.util.Log;
 
 import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.engin.data.ImSetting;
-import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.engin.im.Im.FileType;
+import com.ivy.appshare.engin.im.Person;
 
 public class LocalSetting {
 	private static final String TAG = LocalSetting.class.getSimpleName();
@@ -44,6 +44,7 @@ public class LocalSetting {
 	private boolean mVibrate;
 	private boolean mFirstTime;
 	private boolean mTraceAction;
+	private boolean mNfcPopupWindow;
 
 	private boolean mInitialed;
 
@@ -94,6 +95,7 @@ public class LocalSetting {
 		mVibrate = imSetting.getVibrate();
 		mFirstTime = imSetting.getFirstTime();
 		mTraceAction = imSetting.getTraceAction();
+		mNfcPopupWindow = imSetting.getNfcPopupWindow();
 
 		return 0;
 	}
@@ -229,6 +231,12 @@ public class LocalSetting {
         imSetting.setTraceAction(b);
 	}
 
+    public void saveNfcPopupWindow(boolean b) {
+        mNfcPopupWindow = b;
+        ImSetting imSetting = new ImSetting();
+        imSetting.setNfcPopupWindow(b);
+    }
+
 	public void setBroadCastAddress(InetAddress address) {
 	    mBoraAddress = address;
 	}
@@ -270,6 +278,10 @@ public class LocalSetting {
 
 	public boolean getTraceAction() {
 	    return mTraceAction;
+	}
+	
+	public boolean getNfcPopupWindow() {
+	    return mNfcPopupWindow;
 	}
 
 	public class UserIconEnvironment {
