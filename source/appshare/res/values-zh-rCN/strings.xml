@@ -34,7 +34,7 @@
     <string name="app_action_launch">启动</string>
     <string name="app_action_uninstall">卸载</string>
     <string name="app_action_delete">删除</string>
-    <string name="app_action_bluetoothshare">蓝牙共享</string>
+    <string name="app_action_bluetoothshare">蓝牙分享</string>
     <string name="app_action_property">属性</string>
 
     <string name="toast_send">发送</string>
@@ -45,11 +45,11 @@
     <string name="version">版本</string>
     <string name="sourcedir">路径</string>
 
-    <string name="delete_confirm">确认删除</string>
-    <string name="areyousure_delete">你确定要删除 %1$s 吗?</string>
+    <string name="delete_confirm">删除确认</string>
+    <string name="areyousure_delete">你确定要从磁盘中删除%1$s吗?</string>
 
-    <string name="tiptext">亲,新版本加入了NFC共享自己的功能\n\n只要打开你手机的NFC功能,并且背靠背手机,可以轻松发送本应用给你的好友哦!</string>
-    <string name="setnfc">打开NFC功能</string>
-    <string name="nextifnotify">下次不再提醒</string>
-    <string name="iknown">我知道了</string>
+    <string name="tiptext">通过NFC和Beam可以直接分享“APK分享”。背靠背触碰一下其它手机或平板来分享“APK分享”。</string>
+    <string name="setnfc">设置</string>
+    <string name="nextifnotify">不再提醒</string>
+    <string name="iknown">忽略</string>
 </resources>

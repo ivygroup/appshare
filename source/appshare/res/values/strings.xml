@@ -32,24 +32,24 @@
 	<string name="app_action_view">Details</string>
 	<string name="app_action_install">Install</string>
 	<string name="app_action_launch">Launch</string>
-	<string name="app_action_uninstall">UnInstalled</string>
-	<string name="app_action_delete">delete</string>
+	<string name="app_action_uninstall">Un-install</string>
+	<string name="app_action_delete">Remove</string>
 	<string name="app_action_bluetoothshare">Share by Bluetooth</string>
 	<string name="app_action_property">Property</string>
 
     <string name="toast_send">Send</string>
     <string name="toast_rename">Change name</string>
-    <string name="toast_unselect">Unselect all</string>
+    <string name="toast_unselect">Un-select all</string>
 
-	<string name="packagename">Package name</string>
+	<string name="packagename">Package</string>
     <string name="version">Version</string>
     <string name="sourcedir">Path</string>
 
-    <string name="delete_confirm">confirm delete</string>
-    <string name="areyousure_delete">Are you sure delete %1$s ?</string>
+    <string name="delete_confirm">Confirmation</string>
+    <string name="areyousure_delete">Are you sure to remove %1$s from disk?</string>
 
-    <string name="tiptext">Hi, My dear friend, the newest version has add NFC translate.\n\nYou can translate share-appks to your friend only opened your nfc and touch each other!</string>
-    <string name="setnfc">Open NFC</string>
-    <string name="nextifnotify">Not remind next time</string>
-    <string name="iknown">I known</string>
+    <string name="tiptext">\"Share APKs\" supports to be shared by NFC and Beam directly. Touch another Mobile or Pad back to back to share \"Share APKs\".</string>
+    <string name="setnfc">Settings</string>
+    <string name="nextifnotify">Never remind me again</string>
+    <string name="iknown">Ignore it</string>
 </resources>
