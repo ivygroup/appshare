@@ -208,7 +208,7 @@ public class AppListActivity extends IvyActivityBase implements
 	@SuppressLint("NewApi")
     private void registerNfcPushFeature() {
 	    int current_version = Build.VERSION.SDK_INT;
-	    if (current_version >= Build.VERSION_CODES.JELLY_BEAN) { // 16.
+	    if (current_version >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // 14.
 	        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 	        if (nfcAdapter != null) {
 	            // nfcAdapter.setNdefPushMessageCallback(new PushNfcMessage(), this);
@@ -599,7 +599,7 @@ public class AppListActivity extends IvyActivityBase implements
     @SuppressLint("NewApi")
     private void initPopuptWindow() {
         int current_version = Build.VERSION.SDK_INT;
-        if (current_version < Build.VERSION_CODES.JELLY_BEAN) { // 16.
+        if (current_version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // 14.
             return;
         }
 
@@ -630,17 +630,17 @@ public class AppListActivity extends IvyActivityBase implements
             @Override
             public void onClick(View v) {
                 Intent intent = null;
-                /* if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     intent = new Intent(android.provider.Settings.ACTION_NFC_SETTINGS);
                 } else if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                    intent = new Intent();
-                    ComponentName component = new ComponentName("com.android.settings","com.android.settings.WirelessSettings");
-                    intent.setComponent(component);
-                    intent.setAction("android.intent.action.VIEW");
+                    // intent = new Intent();
+                    // ComponentName component = new ComponentName("com.android.settings","com.android.settings.WirelessSettings");
+                    // intent.setComponent(component);
+                    // intent.setAction("android.intent.action.VIEW");
+                    intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
                 } else {
                     // can't run this branch.
-                }  //*/
-                intent = new Intent(android.provider.Settings.ACTION_NFC_SETTINGS);
+                }
                 startActivity(intent);
 
                 mPopupWindowNfcTip.dismiss();
