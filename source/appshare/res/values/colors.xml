@@ -45,4 +45,6 @@
     <color name="table_color_selected">#FFFFFFFF</color>
     <color name="table_color_normal">#A0FFFFFF</color>
     <color name="selected_share_files">#99D6EB</color>
+
+    <color name="bg_popupwindow">#EEBADBEE</color>
 </resources>

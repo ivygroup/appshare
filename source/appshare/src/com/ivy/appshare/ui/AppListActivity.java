@@ -618,7 +618,7 @@ public class AppListActivity extends IvyActivityBase implements
         int screenWidth = AppListActivity.this.getWindowManager().getDefaultDisplay().getWidth();
         int screenHeight = AppListActivity.this.getWindowManager().getDefaultDisplay().getHeight();
 
-        mPopupWindowNfcTip = new PopupWindow(popupWindow_view, screenWidth, screenHeight/3, true);
+        mPopupWindowNfcTip = new PopupWindow(popupWindow_view, screenWidth, screenHeight/2, true);
         mPopupWindowNfcTip.setBackgroundDrawable(new BitmapDrawable());
         mPopupWindowNfcTip.setAnimationStyle(R.style.PopupAnimation);
 
