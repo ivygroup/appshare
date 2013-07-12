@@ -35,7 +35,7 @@
 	<string name="app_action_uninstall">Un-install</string>
 	<string name="app_action_delete">Remove</string>
 	<string name="app_action_bluetoothshare">Share by Bluetooth</string>
-	<string name="app_action_property">Property</string>
+	<string name="app_action_property">Properties</string>
 
     <string name="toast_send">Send</string>
     <string name="toast_rename">Change name</string>
