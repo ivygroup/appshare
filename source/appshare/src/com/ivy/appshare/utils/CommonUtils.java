@@ -350,14 +350,11 @@ public class CommonUtils {
 	        String dest = LocalSetting.getInstance().getLocalFileReceivePath(FileType.FileType_App) + "/" + tmp;
 	        File fileSrc = new File(mSourceDir);
 	        File fileDest = new File(dest);
-	        if (!fileDest.exists()) {
-    	        try {
-    	            forJavaCp(fileSrc, fileDest);
-    	        } catch (Exception e) {
-                    Log.e(TAG, "When copy file occour a Error,  " + e.getMessage() + ".  source file = " + mSourceDir);
-                }
-	        }
-
+            try {
+                forJavaCp(fileSrc, fileDest);
+            } catch (Exception e) {
+                Log.e(TAG, "When copy file occour a Error,  " + e.getMessage() + ".  source file = " + mSourceDir);
+            }
 	        unInstallApp(mContext, mPackageName);
 	    }
 	    
