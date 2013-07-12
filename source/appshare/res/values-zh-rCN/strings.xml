@@ -39,16 +39,16 @@
 
     <string name="toast_send">发送</string>
     <string name="toast_rename">修改名称</string>
-    <string name="toast_unselect">取消选择</string>
+    <string name="toast_unselect">取消全部选择</string>
 
     <string name="packagename">包名</string>
     <string name="version">版本</string>
     <string name="sourcedir">路径</string>
 
     <string name="delete_confirm">删除确认</string>
-    <string name="areyousure_delete">你确定要从磁盘中删除%1$s吗?</string>
+    <string name="areyousure_delete">您确定要从磁盘中删除%1$s吗?</string>
 
-    <string name="tiptext">通过NFC和Beam可以直接分享“APK分享”。背靠背触碰一下其它手机或平板来分享“APK分享”。</string>
+    <string name="tiptext">通过NFC和Beam可以直接传输“APK分享”应用。背靠背触碰其它手机或平板来传输“APK分享”应用。</string>
     <string name="setnfc">设置</string>
     <string name="nextifnotify">不再提醒</string>
     <string name="iknown">忽略</string>

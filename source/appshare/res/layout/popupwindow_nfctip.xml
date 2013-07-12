@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bg_popupwindow"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:background="@color/bg_popupwindow" >
 
-	<TextView
-	    android:id="@+id/tv_tip"
-	    android:layout_width="match_parent"
-	    android:layout_height="0dp"
-	    android:layout_weight="1"
-	    android:gravity="center"
-	    android:textSize="16sp"
-	    android:text="@string/tiptext" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/linearLayout1"
+        android:orientation="vertical" >
+        
+	    <TextView
+	        android:id="@+id/tv_tip"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10dp"
+	        android:gravity="left"
+	        android:text="@string/tiptext"
+	        android:textSize="16sp" />    
 	
-
-    <Button
-        android:id="@+id/bt_setnfc"
+	    <CheckBox
+	        android:id="@+id/checkbox"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/nextifnotify" />
+    
+    </LinearLayout>
+    
+    <LinearLayout android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/setnfc" />
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
 
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:gravity="center" >
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="0dp"
-            android:layout_weight="2"
+        <Button
+            android:id="@+id/bt_setnfc"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/nextifnotify"/>
-	    
-	    <Button
-	        android:id="@+id/bt_cancle"
-	        android:layout_width="0dp"
             android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:text="@string/iknown" />
-	</LinearLayout>
+            android:text="@string/setnfc" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/bt_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/iknown" />
+        
+    </LinearLayout>
+
+</RelativeLayout>
