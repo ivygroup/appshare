@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -63,7 +64,9 @@ import com.ivy.appshare.utils.IvyActivityBase;
 public class AppListActivity extends IvyActivityBase implements
 		AppFreeShareAdapter.SelectChangeListener, View.OnClickListener, View.OnLongClickListener,
 		AdapterView.OnItemClickListener, ApkLoaderDataChang {
-
+	
+    private static final String TAG = "AppListActivity";
+    
 	private AppFreeShareAdapter mAppAdapter = null;
 	private AppsInfo mMySelfAppsInfo;
 	private APKLoader mAPKLoader = null;
@@ -181,7 +184,7 @@ public class AppListActivity extends IvyActivityBase implements
 					break;
 
 				case MESSAGE_UI_SHOW_NFCTIP_WINDOW:
-				    mPopupWindowNfcTip.showAtLocation(findViewById(R.id.layout), Gravity.BOTTOM, 0, 0);
+					showNfcTipWindow();
 				    break;
 				}
 				super.handleMessage(msg);
@@ -676,4 +679,13 @@ public class AppListActivity extends IvyActivityBase implements
         // mHandler.sendEmptyMessageDelayed(MESSAGE_UI_SHOW_NFCTIP_WINDOW, 200);
         mHandler.sendEmptyMessage(MESSAGE_UI_SHOW_NFCTIP_WINDOW);
     }
+    
+	private void showNfcTipWindow() {
+		try {
+		    mPopupWindowNfcTip.showAtLocation(findViewById(R.id.layout), Gravity.BOTTOM, 0, 0);
+		} catch (Exception e) {
+			Log.e(TAG, "" + e);
+		}
+	
+	}
 }
