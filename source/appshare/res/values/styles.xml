@@ -21,23 +21,37 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="quick_person_info_textview">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:gravity">right|center</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:layout_centerInParent">true</item>
-        <item name="android:layout_alignParentRight">true</item>
-        <item name="android:textSize">@dimen/listbar_secondray_textsize</item>
-        <item name="android:textColor">@color/listbar_secondray</item>
-    </style>
-
     <style name="quick_person_relativelayout">
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingRight">5dp</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/quick_person_info_textview_height</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="quick_person_info_textview_lable">
+        <item name="android:gravity">left|center</item>
+        <item name="android:layout_width">@dimen/user_setting_textview_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textSize">@dimen/listbar_main_textsize</item>
+        <item name="android:textColor">@color/listbar_main</item>
+    </style>
+
+    <style name="quick_person_info_textview">
+        <item name="android:gravity">left|center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:textSize">@dimen/listbar_secondray_textsize</item>
+        <item name="android:textColor">@color/listbar_secondray</item>
     </style>
 
     <style name="PopupAnimation" parent="android:Animation">

@@ -19,7 +19,7 @@
     <dimen name="common_title_height">42dp</dimen>
 
     <dimen name="user_setting_layout_heigth">60dp</dimen>
-    <dimen name="user_setting_textview_width">100dp</dimen>
+    <dimen name="user_setting_textview_width">70dp</dimen>
 
     <dimen name="side_menu_item_layout_width">220dp</dimen>
     
@@ -31,6 +31,4 @@
 
     <dimen name="setting_margin">6dp</dimen>
     <dimen name="setting_items_margin_top">12dp</dimen>
-
-    <dimen name="quick_person_info_textview_height">60dp</dimen>
 </resources>

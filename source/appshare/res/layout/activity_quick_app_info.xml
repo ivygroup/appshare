@@ -16,7 +16,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="300dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/background_holo_light"
     android:orientation = "vertical" 
     android:padding="10dp">
@@ -38,11 +38,14 @@
 
         <TextView
                 android:id="@+id/name"
-                android:layout_marginLeft="20dp"
-                android:layout_width="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
                 android:textColor="@color/listbar_main"
-                android:textSize="@dimen/listbar_main_textsize"/>
+                android:textSize="20sp"/>
     </LinearLayout>
     
     <!-- package name-->
@@ -52,19 +55,14 @@
         style="@style/quick_person_relativelayout" >
         <TextView
             android:id="@+id/packagename_lable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_alignParentLeft="true"
             android:text="@string/packagename"
-            android:textColor="@color/listbar_main"
-            android:textSize="@dimen/listbar_main_textsize" />
+            style="@style/quick_person_info_textview_lable"  />
         <TextView
             android:id="@+id/packagename"
             android:layout_toRightOf="@id/packagename_lable"
             style="@style/quick_person_info_textview"/>
     </RelativeLayout>
-    
+
     <FrameLayout
         android:background="@drawable/listbar_divider"
         android:layout_width="match_parent"
@@ -76,13 +74,8 @@
         style="@style/quick_person_relativelayout" >
         <TextView
             android:id="@+id/version_lable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_alignParentLeft="true"
             android:text="@string/version"
-            android:textColor="@color/listbar_main"
-            android:textSize="@dimen/listbar_main_textsize" />
+            style="@style/quick_person_info_textview_lable"  />
         <TextView
             android:id="@+id/version"
             android:layout_toRightOf="@id/version_lable"
@@ -100,13 +93,8 @@
         style="@style/quick_person_relativelayout" >
         <TextView
             android:id="@+id/sourcedir_lable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_alignParentLeft="true"
             android:text="@string/sourcedir"
-            android:textColor="@color/listbar_main"
-            android:textSize="@dimen/listbar_main_textsize" />
+            style="@style/quick_person_info_textview_lable"  />
         <TextView
             android:id="@+id/sourcedir"
             android:layout_toRightOf="@id/sourcedir_lable"
