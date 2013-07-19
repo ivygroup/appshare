@@ -34,7 +34,7 @@
             android:layout_height="80dp"
             android:padding="1dp"
             android:background="@drawable/menu_box_white_gray_normal"   
-            android:src="@drawable/ic_contact_picture" />
+            android:src="@drawable/ic_file_type_apk" />
 
         <TextView
                 android:id="@+id/name"

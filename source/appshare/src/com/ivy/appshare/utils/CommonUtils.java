@@ -83,7 +83,7 @@ public class CommonUtils {
 			imageLeft.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			imageLeft.setImageBitmap(bitmap);
 		} else {
-			imageLeft.setImageResource(R.drawable.contact_photo_default);
+//			imageLeft.setImageResource(R.drawable.contact_photo_default);
 		}
 	}
 

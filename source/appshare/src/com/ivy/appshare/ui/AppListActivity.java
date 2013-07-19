@@ -122,12 +122,12 @@ public class AppListActivity extends IvyActivityBase implements
 		mTextLeft.setOnLongClickListener(this);
 
 		mButtonMid = ((ImageButton) actionbar.findViewById(R.id.btn_mid));
-		mButtonMid.setImageResource(R.drawable.btn_check_off_holo_light);
+		mButtonMid.setImageResource(R.drawable.unselected_pressed);
 		mButtonMid.setOnClickListener(this);
 		mButtonMid.setOnLongClickListener(this);
 
 		mButtonRight = ((ImageButton) actionbar.findViewById(R.id.btn_right));
-		mButtonRight.setImageResource(R.drawable.ic_select_send);
+		mButtonRight.setImageResource(R.drawable.ic_menu_share);
 		mButtonRight.setVisibility(View.VISIBLE);
 		mButtonRight.setOnClickListener(this);
 		mButtonRight.setOnLongClickListener(this);
