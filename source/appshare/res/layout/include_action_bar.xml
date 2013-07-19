@@ -8,64 +8,79 @@
         android:id="@+id/left_text_info"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/common_title_height"
-        android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:layout_alignParentLeft="true"
-		android:singleLine="true"
-        android:textColor="@color/action_bar_text_text_color"
-        android:textSize="@dimen/list_main_textsize"
-        android:background="@drawable/textbtn_selector" />
-
-    <TextView
-        android:id="@+id/center_text_info"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/common_title_height"
-        android:gravity="center"
+        android:layout_toLeftOf="@+id/center_text_info"
+        android:background="@drawable/textbtn_selector"
+        android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:layout_centerInParent="true"
-        android:textColor="@color/list_main"
-        android:textSize="@dimen/list_secondray_textsize"
-        android:background="@drawable/textbtn_selector" />
+        android:singleLine="true"
+        android:textColor="@color/action_bar_text_text_color"
+        android:textSize="@dimen/list_main_textsize" />
+    
+   	<TextView
+   	    android:id="@+id/center_text_info"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="@dimen/common_title_height"
+   	    android:layout_centerInParent="true"
+   	    android:gravity="center"
+   	    android:textColor="@color/list_main"
+   	    android:textSize="@dimen/list_secondray_textsize" />
 
 	<RelativeLayout
-		android:id="@+id/right_layout"
-		android:layout_alignParentRight="true"
+	    android:id="@+id/right_layout"
 	    android:layout_width="wrap_content"
 	    android:layout_height="@dimen/common_title_height"
-	    android:layout_marginRight="5dp"
-		android:maxWidth="120dp"
-	    android:gravity="center" >
+	    android:layout_alignParentRight="true"
+	    android:layout_toRightOf="@id/center_text_info"
+	    android:gravity="right|center_vertical"
+	    android:maxWidth="120dp" >
 	
         <TextView
             android:id="@+id/right_text_info"
             android:layout_width="105dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
+            android:padding="5dp"
             android:gravity="center"
             android:maxWidth="120dp"
             android:singleLine="true"
             android:textColor="@color/action_bar_text_text_color"
             android:textSize="@dimen/list_main_textsize"
             android:visibility="gone" />
-	    
-	    <com.ivy.appshare.widget.SimpleImageButton
-	        android:id="@+id/btn_right"
-	        android:layout_width="@dimen/common_title_height"
-	        android:layout_height="@dimen/common_title_height"
-	        android:padding="8dp"
-	        android:clickable="true"
-	        android:visibility="gone" />
+        
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:gravity="center"
+	        android:orientation="horizontal" >
+	
+		    <com.ivy.appshare.widget.SimpleImageButton
+		        android:id="@+id/btn_mid"
+		        android:layout_width="@dimen/common_title_height"
+		        android:layout_height="@dimen/common_title_height"
+		        android:clickable="true"
+		        android:padding="5dp"
+		        android:visibility="invisible" />
+	
+		   <com.ivy.appshare.widget.SimpleImageButton
+		       android:id="@+id/btn_right"
+		       android:layout_width="@dimen/common_title_height"
+		       android:layout_height="@dimen/common_title_height"
+		       android:clickable="true"
+		       android:padding="5dp"
+		       android:visibility="invisible" />
+	
+		</LinearLayout>
 	
 	    <ProgressBar
 	        android:id="@+id/switching_bar"
 	        style="?android:attr/progressBarStyleSmallTitle"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="match_parent"
 	        android:layout_centerInParent="true"
+	        android:padding="5dp"
 	        android:visibility="gone" />
 	</RelativeLayout>
 

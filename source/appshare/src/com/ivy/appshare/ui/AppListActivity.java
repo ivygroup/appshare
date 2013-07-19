@@ -72,6 +72,7 @@ public class AppListActivity extends IvyActivityBase implements
 	private APKLoader mAPKLoader = null;
 	private GridView mAppGridView = null;
 	private TextView mTextSelected;
+	private ImageButton mButtonMid;
 	private ImageButton mButtonRight;
 	private TextView mTextLeft;
 	private ListView mSharedPersonList;
@@ -112,9 +113,6 @@ public class AppListActivity extends IvyActivityBase implements
 		mTextSelected = ((TextView) actionbar
 				.findViewById(R.id.center_text_info));
 		mTextSelected.setVisibility(View.VISIBLE);
-		mTextSelected.setOnClickListener(this);
-		mTextSelected.setOnLongClickListener(this);
-		setSelectItemText(0);
 
 		mTextLeft = ((TextView) actionbar.findViewById(R.id.left_text_info));
 		mTextLeft.setVisibility(View.VISIBLE);
@@ -123,12 +121,19 @@ public class AppListActivity extends IvyActivityBase implements
 		mTextLeft.setOnClickListener(this);
 		mTextLeft.setOnLongClickListener(this);
 
+		mButtonMid = ((ImageButton) actionbar.findViewById(R.id.btn_mid));
+		mButtonMid.setImageResource(R.drawable.btn_check_off_holo_light);
+		mButtonMid.setOnClickListener(this);
+		mButtonMid.setOnLongClickListener(this);
+
 		mButtonRight = ((ImageButton) actionbar.findViewById(R.id.btn_right));
 		mButtonRight.setImageResource(R.drawable.ic_select_send);
 		mButtonRight.setVisibility(View.VISIBLE);
 		mButtonRight.setOnClickListener(this);
 		mButtonRight.setOnLongClickListener(this);
 
+		setSelectItemText(0);
+		
 		mShareData = new ArrayList<String>();
 		mAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_expandable_list_item_1,mShareData);
@@ -418,8 +423,13 @@ public class AppListActivity extends IvyActivityBase implements
 	}
 
 	private void setSelectItemText(int count) {
-		String content = String.format(getString(R.string.choose_app), count);
-		mTextSelected.setText(content);
+		if (0 == count) {
+			mButtonMid.setVisibility(View.INVISIBLE);
+			mTextSelected.setText(R.string.choose_app);
+		} else {
+			mButtonMid.setVisibility(View.VISIBLE);
+			mTextSelected.setText(String.format(getString(R.string.selected_app), count));
+		}
 	}
 
 	@Override
@@ -488,7 +498,7 @@ public class AppListActivity extends IvyActivityBase implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.center_text_info:
+		case R.id.btn_mid:
 			if (mAppAdapter != null) {
 				mAppAdapter.disSelectAll();
 			}
@@ -558,7 +568,7 @@ public class AppListActivity extends IvyActivityBase implements
 	public boolean onLongClick(View v) {
 		int toastTextId = 0;
 		switch (v.getId()) {
-		case R.id.center_text_info:
+		case R.id.btn_mid:
 			toastTextId = R.string.toast_unselect;
 			break;
 		case R.id.left_text_info:

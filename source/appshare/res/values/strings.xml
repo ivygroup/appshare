@@ -7,7 +7,8 @@
 	<string name="share_list">%1$s is sharing %2$d APKs.</string>
 	<string name="wait_receive_dl_title">Waiting</string>
 	<string name="wait_receive_dl_message">Waiting to receive APKs.</string>
-	<string name="choose_app">%1$d items selected.</string>
+	<string name="choose_app">Please select APPs.</string>
+	<string name="selected_app">APP(%1$d)</string>
 
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>

@@ -7,7 +7,8 @@
 	<string name="share_list">%1$s分享了%2$d个应用。</string>
 	<string name="wait_receive_dl_title">等待</string>
 	<string name="wait_receive_dl_message">等待接收应用</string>
-	<string name="choose_app">已选%1$d项</string>
+	<string name="choose_app">请选择应用程序</string>
+	<string name="selected_app">应用程序（%1$d）</string>
 
 	<string name="ok">确定</string>
 	<string name="cancel">取消</string>
