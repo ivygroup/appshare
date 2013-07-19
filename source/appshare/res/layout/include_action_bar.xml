@@ -33,8 +33,7 @@
 	    android:layout_height="@dimen/common_title_height"
 	    android:layout_alignParentRight="true"
 	    android:layout_toRightOf="@id/center_text_info"
-	    android:gravity="right|center_vertical"
-	    android:maxWidth="120dp" >
+	    android:gravity="right|center_vertical">
 	
         <TextView
             android:id="@+id/right_text_info"
@@ -52,7 +51,7 @@
 	    <LinearLayout
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
+   	    	android:layout_centerInParent="true"
 	        android:gravity="center"
 	        android:orientation="horizontal" >
 	
@@ -78,10 +77,12 @@
 	        android:id="@+id/switching_bar"
 	        style="?android:attr/progressBarStyleSmallTitle"
 	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
+	        android:layout_height="wrap_content"
 	        android:layout_alignParentRight="true"
+	        android:layout_centerInParent="true"
 	        android:padding="5dp"
 	        android:visibility="gone" />
+
 	</RelativeLayout>
 
 </RelativeLayout>

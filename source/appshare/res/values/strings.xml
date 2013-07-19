@@ -23,7 +23,7 @@
 	<string name="from">Receive from</string>
 
 	<string name="waittoreceive">A sharing request message is being sent &#8230;</string>
-	<string name="sendreject">Sorry! You are not allowed to get the files from %1$s.</string>
+	<string name="sendreject">Sorry! You are declined from %1$s.</string>
 
 	<string name="send_by_bluetooth">Share the APP of \"Share APKs\" by Bluetooth</string>
 	<string name="send_by_bluetooth_title">Information</string>
