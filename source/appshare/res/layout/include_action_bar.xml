@@ -40,7 +40,7 @@
             android:id="@+id/right_text_info"
             android:layout_width="105dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
             android:padding="5dp"
             android:gravity="center"
             android:maxWidth="120dp"
@@ -64,13 +64,13 @@
 		        android:padding="5dp"
 		        android:visibility="invisible" />
 	
-		   <com.ivy.appshare.widget.SimpleImageButton
-		       android:id="@+id/btn_right"
-		       android:layout_width="@dimen/common_title_height"
-		       android:layout_height="@dimen/common_title_height"
-		       android:clickable="true"
-		       android:padding="5dp"
-		       android:visibility="invisible" />
+			<com.ivy.appshare.widget.SimpleImageButton
+			    android:id="@+id/btn_right"
+			    android:layout_width="@dimen/common_title_height"
+			    android:layout_height="@dimen/common_title_height"
+			    android:clickable="true"
+			    android:padding="5dp"
+			    android:visibility="invisible" />
 	
 		</LinearLayout>
 	
@@ -79,7 +79,7 @@
 	        style="?android:attr/progressBarStyleSmallTitle"
 	        android:layout_width="wrap_content"
 	        android:layout_height="match_parent"
-	        android:layout_centerInParent="true"
+	        android:layout_alignParentRight="true"
 	        android:padding="5dp"
 	        android:visibility="gone" />
 	</RelativeLayout>

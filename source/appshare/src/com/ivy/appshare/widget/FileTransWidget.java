@@ -146,7 +146,6 @@ public class FileTransWidget extends BaseAdapter implements OnClickListener {
             myClass.mIcon = (ImageView)view.findViewById(R.id.appicon);
             myClass.mAppName = (TextView)view.findViewById(R.id.name);
             myClass.mFileSize = (TextView)view.findViewById(R.id.size);
-            myClass.mProgressLinearLayout = (LinearLayout)view.findViewById(R.id.progress_layout);
             myClass.mProgressBar = (ProgressBar)view.findViewById(R.id.progress);
             myClass.mProgressBar.setMax(100);
             myClass.mProgressText = (TextView)view.findViewById(R.id.progress_text);
@@ -176,33 +175,28 @@ public class FileTransWidget extends BaseAdapter implements OnClickListener {
             myClass.mIcon.setImageResource(R.drawable.ic_file_type_apk);
         }
 
-        if (theInfo.mTransState == TransState.READY) {
-            myClass.mProgressLinearLayout.setVisibility(View.GONE);
+        if (theInfo.mTransState == TransState.READY
+        		|| theInfo.mTransState == TransState.BEGIN) {
+        	myClass.mProgressBar.setVisibility(View.VISIBLE);
+            myClass.mProgressText.setVisibility(View.VISIBLE);
             myClass.mResultImage.setVisibility(View.INVISIBLE);
-
-        } else if (theInfo.mTransState == TransState.BEGIN) {
-            myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
-            myClass.mResultImage.setVisibility(View.INVISIBLE);
-            int progress = 0;
-            myClass.mProgressBar.setProgress(progress);
-            myClass.mProgressText.setText(progress+"%");
-
+            myClass.mProgressBar.setProgress(0);
+            myClass.mProgressText.setText("0%");
         } else if (theInfo.mTransState == TransState.TRANSING) {
-            myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
+        	myClass.mProgressBar.setVisibility(View.VISIBLE);
+            myClass.mProgressText.setVisibility(View.VISIBLE);
             myClass.mResultImage.setVisibility(View.INVISIBLE);
             int progress = (int)(theInfo.mPos*100/theInfo.mTotal);
             myClass.mProgressBar.setProgress(progress);
             myClass.mProgressText.setText(progress+"%");
-
         } else if (theInfo.mTransState == TransState.OK) {
-            myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
+            myClass.mProgressBar.setVisibility(View.INVISIBLE);
+            myClass.mProgressText.setVisibility(View.INVISIBLE);
             myClass.mResultImage.setImageResource(R.drawable.ic_send_successful);
             myClass.mResultImage.setVisibility(View.VISIBLE);
-            myClass.mProgressBar.setProgress(100);
-            myClass.mProgressText.setText("100%");
-
         } else {
-            myClass.mProgressLinearLayout.setVisibility(View.VISIBLE);
+            myClass.mProgressBar.setVisibility(View.INVISIBLE);
+            myClass.mProgressText.setVisibility(View.INVISIBLE);
             myClass.mResultImage.setImageResource(R.drawable.ic_send_failed);
             myClass.mResultImage.setVisibility(View.VISIBLE);
         }
@@ -225,7 +219,6 @@ public class FileTransWidget extends BaseAdapter implements OnClickListener {
         public ImageView mIcon;
         public TextView mAppName;
         public TextView mFileSize;
-        public LinearLayout mProgressLinearLayout;
         public ProgressBar mProgressBar;
         public TextView mProgressText;
         public ImageView mResultImage;

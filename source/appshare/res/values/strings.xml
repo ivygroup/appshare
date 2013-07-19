@@ -15,14 +15,14 @@
 	<string name="change_name">Change name</string>
 	<string name="name_empty">Please input a user name.</string>
 
-	<string name="waittosend">Waiting for connection &#8230;</string>
+	<string name="waittosend">Waiting for sharing request messages from friends &#8230;</string>
 	<string name="sendto">to</string>
 
-	<string name="requestsendtitle">Send a request</string>
-	<string name="requestsendmessage">%1$s sends a request for the files. Will you share them to %1$s?</string>
+	<string name="requestsendtitle">A sharing request message is received</string>
+	<string name="requestsendmessage">Will you share the APKs to %1$s?</string>
 	<string name="from">Receive from</string>
 
-	<string name="waittoreceive">Waiting for a permission &#8230;</string>
+	<string name="waittoreceive">A sharing request message is being sent &#8230;</string>
 	<string name="sendreject">Sorry! You are not allowed to get the files from %1$s.</string>
 
 	<string name="send_by_bluetooth">Share the APP of \"Share APKs\" by Bluetooth</string>

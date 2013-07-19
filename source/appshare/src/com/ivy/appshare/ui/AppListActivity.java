@@ -541,6 +541,7 @@ public class AppListActivity extends IvyActivityBase implements
 		        startActivity(intent);
 		    } else {
 		        // TODO:  Toast.
+		    	Toast.makeText(this, R.string.choose_app, Toast.LENGTH_SHORT).show();
 		    }
 		}
 		break;

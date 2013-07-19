@@ -15,14 +15,14 @@
 	<string name="change_name">修改名称</string>
     <string name="name_empty">请输入用户名。</string>
 
-    <string name="waittosend">等待好友连接……</string>
+    <string name="waittosend">等待好友的共享请求消息……</string>
 	<string name="sendto">发送给</string>
 	<string name="from">接收应用来自</string>
 
-	<string name="requestsendtitle">请求发送</string>
-	<string name="requestsendmessage">%1$s请求您的共享文件，要发给%1$s这些文件吗？</string>
+	<string name="requestsendtitle">收到一条共享请求消息</string>
+	<string name="requestsendmessage">您要将这些应用程序发给%1$s吗？</string>
 
-	<string name="waittoreceive">等待确认……</string>
+	<string name="waittoreceive">正在发送共享请求消息……</string>
 	<string name="sendreject">对不起！%1$s拒绝了您获取这些文件。</string>
 	<string name="send_by_bluetooth">通过蓝牙传输“APK分享”应用</string>
 	<string name="send_by_bluetooth_title">提示</string>
