@@ -116,7 +116,7 @@ public class AppListActivity extends IvyActivityBase implements
 
 		mTextLeft = ((TextView) actionbar.findViewById(R.id.left_text_info));
 		mTextLeft.setVisibility(View.VISIBLE);
-
+		mTextLeft.setBackgroundResource(R.drawable.textbtn_selector);
 		mTextLeft.setText(mLocalSetting.getMySelf().mNickName);
 		mTextLeft.setOnClickListener(this);
 		mTextLeft.setOnLongClickListener(this);
