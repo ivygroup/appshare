@@ -2,6 +2,8 @@ package com.ivy.appshare.ui;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.Iterator;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,11 +14,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.engin.control.ImManager;
 import com.ivy.appshare.engin.im.Im.FileType;
 import com.ivy.appshare.engin.im.Person;
 import com.ivy.appshare.utils.ImageLoader;
 import com.ivy.appshare.widget.FileTransWidget;
+import com.ivy.appshare.widget.FileTransWidget.MyAppInfo;
 
 public class ReceiveListAdapter extends BaseAdapter implements ImageLoader.LoadFinishListener {
     private static final String TAG = "ReceiveListAdapter";
@@ -25,10 +29,12 @@ public class ReceiveListAdapter extends BaseAdapter implements ImageLoader.LoadF
     private Person mFromPerson;
     private FileTransWidget mFileTransWidget;
     private ImageLoader mImageLoader;
+    private String mSsid;
 
-    public ReceiveListAdapter(Context context) {
+    public ReceiveListAdapter(Context context, String ssid) {
         mFileTransWidget = new FileTransWidget(context, true);
         mImageLoader = new ImageLoader(this);
+        mSsid = ssid;
     }
 
     public void changeTransState_Begin(Person person, int fileID, String fileFullPath) {
@@ -64,6 +70,16 @@ public class ReceiveListAdapter extends BaseAdapter implements ImageLoader.LoadF
             File file = new File(appInfo.mFullPath);
             if (file.exists()) {
                 appInfo.mFileSize = getFileSizeByFormat(file.length());
+            }
+            List<MyAppInfo> allAppInfo = mFileTransWidget.getAllApps();
+            boolean isAllappReceived = false;
+            for (Iterator<MyAppInfo> sData = allAppInfo.iterator(); 
+            		sData.hasNext();) {
+    			if (!sData.next().mTransState.isComplete())
+    				isAllappReceived = true;
+    		}
+            if (isAllappReceived) {
+            	MyApplication.getInstance().addFilterData(mSsid);
             }
         }
     }

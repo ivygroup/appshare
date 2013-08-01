@@ -10,7 +10,7 @@
    	    android:layout_height="@dimen/common_title_height"
    	    android:layout_centerInParent="true"
    	    android:gravity="center"
-   	    android:maxWidth="180dp"
+   	    android:maxWidth="170dp"
    	    android:textColor="@color/list_main"
    	    android:textSize="@dimen/list_secondray_textsize" />
    
@@ -25,10 +25,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
-            android:background="@android:color/transparent"
+            android:drawablePadding="2dp"
+            android:drawableLeft="@drawable/action_edit"
+            android:background="@drawable/btn_bar_selector"
             android:singleLine="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:textSize="@dimen/list_main_textsize"/>
 <!--android:textColor="@color/action_bar_text_text_color"-->
     </LinearLayout>

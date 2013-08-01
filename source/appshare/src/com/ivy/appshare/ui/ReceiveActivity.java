@@ -86,7 +86,7 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
 
         // init listview and adapter.
         mListView = (ListView)findViewById(R.id.list);
-        mAdapter = new ReceiveListAdapter(this);
+        mAdapter = new ReceiveListAdapter(this, mSSID);
         mListView.setAdapter(mAdapter);
 
         // handler for messages

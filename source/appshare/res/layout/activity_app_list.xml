@@ -3,28 +3,48 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
-    <ListView
-       android:id="@+id/shared_person"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_marginLeft="10dp"
-       android:layout_marginRight="15dp"
-       android:listSelector="@drawable/list_selector" />
+    <LinearLayout
+        android:id="@+id/shared_notify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:visibility="gone"
+        >
 
-    <include layout="@layout/include_action_bar"/>
+        <ListView
+            android:id="@+id/shared_person"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="6"
+            android:listSelector="@drawable/list_selector" />
+
+        <ImageButton
+            android:id="@+id/clear_all_notify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_notify_clear"
+            android:layout_margin="5dp"
+             />
+    </LinearLayout>
+
+    <include layout="@layout/include_modify_action_bar" />
 
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="0dp"
-        android:horizontalSpacing="5dp"
         android:columnWidth="80dp"
-        android:stretchMode="columnWidth"
         android:gravity="center"
-        android:listSelector="@drawable/list_selector"/>
+        android:horizontalSpacing="5dp"
+        android:listSelector="@drawable/list_selector"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="0dp" />
 
 </LinearLayout>
