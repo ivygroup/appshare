@@ -5,6 +5,7 @@ public class APInfo {
     String mFriendlyName;
     String mHotspotPassword;
     int mShareAppCount;
+    int mSessionID;
 
     public String getSSID() {
         if (mSSID == null) {
@@ -31,5 +32,9 @@ public class APInfo {
 
     public int getShareAppCount() {
         return mShareAppCount;
+    }
+
+    public int getSessionID() {
+        return mSessionID;
     }
 }

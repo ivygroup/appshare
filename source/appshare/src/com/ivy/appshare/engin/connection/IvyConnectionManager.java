@@ -433,12 +433,7 @@ public class IvyConnectionManager implements ConnectionStateListener {
         resultApInfos.clear();
         if (src != null) {
             for (AccessPointInfo info : src) {
-                APInfo apInfo = new APInfo();
-                apInfo.mSSID = info.getSSID();
-                apInfo.mFriendlyName = info.getFriendlyName();
-                apInfo.mHotspotPassword = info.getIvyHotspotPassword();
-                apInfo.mShareAppCount = info.mShareAppCount;
-                resultApInfos.add(apInfo);
+                addOneApToScanResult(info, resultApInfos);
             }
         }
     }
@@ -453,6 +448,16 @@ public class IvyConnectionManager implements ConnectionStateListener {
         apInfo.mFriendlyName = info.getFriendlyName();
         apInfo.mHotspotPassword = info.getIvyHotspotPassword();
         apInfo.mShareAppCount = info.mShareAppCount;
+
+        try{
+            String[] arr = apInfo.mSSID.split("-", 4);
+            apInfo.mFriendlyName = arr[2];
+            apInfo.mShareAppCount = Integer.valueOf(arr[1]);
+            apInfo.mSessionID = Integer.valueOf(arr[3]);
+        } catch(IndexOutOfBoundsException e){
+            // nothing to do.
+        }
+
         resultApInfos.add(apInfo);
     }
 

@@ -39,6 +39,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
     
     private final static String SSID_PREFIX = "ivyappshare";
     private final static String SSID_PASSWORD = "ivyappshare";
+    private static int msSessionID = 0;   // range is 0 -99, if this id >99, then roll to 0.
     
     private IntentFilter mIntentFilter;
     private BroadcastReceiver mReceiver;
@@ -797,7 +798,15 @@ public class ConnectionManagement implements WifiStateChangedListener {
         mySSID.append("-");
         mySSID.append(shareCount);
         mySSID.append("-");
-        mySSID.append(getPrefixSSID(30 - mySSID.length()));
+        String strSessionID = String.valueOf(msSessionID);
+        msSessionID++;
+        if (msSessionID >= 100) {
+            msSessionID = 0;
+        }
+        mySSID.append(getPrefixSSID(30 - mySSID.length() - (strSessionID.length()+1))); // 30 is max byte
+        mySSID.append("-");
+        mySSID.append(strSessionID);
+
         mIvyHotspotWifiConfigation.SSID = mySSID.toString();
         mIvyHotspotWifiConfigation.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
         mIvyHotspotWifiConfigation.allowedKeyManagement.clear();
