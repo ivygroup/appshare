@@ -450,11 +450,15 @@ public class IvyConnectionManager implements ConnectionStateListener {
         apInfo.mShareAppCount = info.mShareAppCount;
 
         try{
-            String[] arr = apInfo.mSSID.split("-", 4);
-            apInfo.mFriendlyName = arr[2];
-            apInfo.mShareAppCount = Integer.valueOf(arr[1]);
-            apInfo.mSessionID = Integer.valueOf(arr[3]);
+            String[] arr = apInfo.mSSID.split("-", 4);  // ivyappshare-count-sessioID-name
+            if (arr.length==4) {
+                apInfo.mShareAppCount = Integer.valueOf(arr[1]);
+                apInfo.mSessionID = Integer.valueOf(arr[2]);
+                apInfo.mFriendlyName = arr[3];
+            }
         } catch(IndexOutOfBoundsException e){
+            // nothing to do.
+        } catch(NumberFormatException e) {
             // nothing to do.
         }
 

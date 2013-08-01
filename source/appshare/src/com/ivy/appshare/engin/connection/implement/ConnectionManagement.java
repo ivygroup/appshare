@@ -803,9 +803,10 @@ public class ConnectionManagement implements WifiStateChangedListener {
         if (msSessionID >= 100) {
             msSessionID = 0;
         }
-        mySSID.append(getPrefixSSID(30 - mySSID.length() - (strSessionID.length()+1))); // 30 is max byte
-        mySSID.append("-");
         mySSID.append(strSessionID);
+        mySSID.append("-");
+        mySSID.append(getPrefixSSID(30 - mySSID.length())); // 30 is max byte
+
 
         mIvyHotspotWifiConfigation.SSID = mySSID.toString();
         mIvyHotspotWifiConfigation.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
