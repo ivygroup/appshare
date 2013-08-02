@@ -35,6 +35,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -80,8 +82,6 @@ public class AppListActivity extends IvyActivityBase implements
 	private Button mTextLeft;
 	private ListView mSharedPersonList;
 	private PopupWindow mPopupWindowNfcTip;
-	private LinearLayout mSharedNotify;
-	private ImageButton mClearNotify;
 
 	private LocalSetting mLocalSetting;
 	private Handler mHandler;
@@ -89,7 +89,7 @@ public class AppListActivity extends IvyActivityBase implements
 	private List<String> mFileShareSSID = new ArrayList<String>();
 	private List<String> mFileShareName = new ArrayList<String>();
 	private List<String> mShareData;
-	private ArrayAdapter mAdapter;
+	private NotifyListAdapter mAdapter;
 
 	private ApkBroadcastReceiver mApkReceiver = new ApkBroadcastReceiver();
 
@@ -138,54 +138,11 @@ public class AppListActivity extends IvyActivityBase implements
 
 		setSelectItemText(0);
 
-		mSharedNotify = (LinearLayout) findViewById(R.id.shared_notify);
-		mClearNotify = (ImageButton) findViewById(R.id.clear_all_notify);
-		mClearNotify.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				mSharedNotify.setVisibility(View.GONE);
-				for (Iterator<String> sid = mFileShareSSID.iterator(); sid.hasNext();)
-					MyApplication.getInstance().addFilterData(sid.next());
-			}
-		});
-
 		mShareData = new ArrayList<String>();
-		mAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_expandable_list_item_1, mShareData);
+		mAdapter = new NotifyListAdapter(this,
+						R.layout.listitem_notify, mShareData);
 		mSharedPersonList = (ListView) findViewById(R.id.shared_person);
 		mSharedPersonList.setAdapter(mAdapter);
-		mSharedPersonList.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					final int arg2, long arg3) {
-				/*
-				 * CommonUtils.getMyAlertDialogBuilder(AppListActivity.this)
-				 * .setTitle(R.string.wait_receive_dl_title)
-				 * .setMessage(R.string.wait_receive_dl_message)
-				 * .setIcon(android.R.drawable.ic_dialog_info)
-				 * .setPositiveButton(R.string.ok, new
-				 * DialogInterface.OnClickListener() {
-				 * 
-				 * @Override public void onClick(DialogInterface dialog, int
-				 * which) { Intent intent = new
-				 * Intent(AppListActivity.this,ReceiveActivity.class);
-				 * intent.putExtra("ssid", mFileShareSSID.get(arg2));
-				 * intent.putExtra("nickName", mFileShareName.get(arg2));
-				 * startActivity(intent); }
-				 * 
-				 * }) .setNegativeButton(R.string.cancel, null)
-				 * .show().setCanceledOnTouchOutside(false);
-				 */
-				Intent intent = new Intent(AppListActivity.this,
-						ReceiveActivity.class);
-				intent.putExtra("ssid", mFileShareSSID.get(arg2));
-				intent.putExtra("nickName", mFileShareName.get(arg2));
-				startActivityForResult(intent, REQUEST_RECEIVE_APP);
-			}
-		});
 
 		mAPKLoader = new APKLoader();
 		mAPKLoader.init(this, this);
@@ -456,12 +413,6 @@ public class AppListActivity extends IvyActivityBase implements
 		}
 
 		mAdapter.notifyDataSetChanged();
-		Log.d("b619","mShareData.size()="+mShareData.size()+",mFileSharedNum="+mFileSharedNum);
-		if (mShareData.size() == 0) {
-			mSharedNotify.setVisibility(View.GONE);
-		} else {
-			mSharedNotify.setVisibility(View.VISIBLE);
-		}
 	}
 	
 	private void setSelectItemText(int count) {
@@ -635,6 +586,9 @@ public class AppListActivity extends IvyActivityBase implements
 		case R.id.btn_right:
 			toastTextId = R.string.toast_send;
 			break;
+		case R.id.clear_all_notify:
+			toastTextId = R.string.toast_refuse;
+			break;
 		}
 		Toast.makeText(this, toastTextId, Toast.LENGTH_SHORT).show();
 		return false;
@@ -768,6 +722,55 @@ public class AppListActivity extends IvyActivityBase implements
 		} catch (Exception e) {
 			Log.e(TAG, "" + e);
 		}
-
 	}
+	
+	public class NotifyListAdapter extends ArrayAdapter<String> {  
+	    private int resourceId;  
+	    private Context mContext;
+	    public NotifyListAdapter(Context context, int textViewResourceId, List<String> objects) {  
+	        super(context, textViewResourceId, objects);  
+	        this.resourceId = textViewResourceId;
+	        this.mContext = context;
+	    }  
+	      
+	    @Override  
+	    public View getView(final int position, View convertView, ViewGroup parent){  
+	        String ssid = getItem(position);  
+	        LinearLayout layoutListItem = new LinearLayout(getContext());  
+	        String inflater = Context.LAYOUT_INFLATER_SERVICE;   
+	        LayoutInflater listItem = (LayoutInflater)getContext().getSystemService(inflater);   
+	        listItem.inflate(resourceId, layoutListItem, true);  
+	        TextView notifyText = (TextView) layoutListItem.findViewById(R.id.notify_text);
+	        notifyText.setText(ssid);
+	        notifyText.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(AppListActivity.this,
+							ReceiveActivity.class);
+					intent.putExtra("ssid", mFileShareSSID.get(position));
+					intent.putExtra("nickName", mFileShareName.get(position));
+					startActivityForResult(intent, REQUEST_RECEIVE_APP);
+				}});
+	        ImageButton cancelReceive = (ImageButton)layoutListItem.findViewById(R.id.clear_all_notify);  
+	        cancelReceive.setOnClickListener(new OnClickListener(){
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					MyApplication.getInstance().addFilterData(mFileShareSSID.get(position));
+					updateList();
+				}});
+	        cancelReceive.setOnLongClickListener(new OnLongClickListener(){
+
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO Auto-generated method stub
+					Toast.makeText(mContext, R.string.toast_refuse, Toast.LENGTH_SHORT).show();
+					return false;
+				}});
+	        return layoutListItem;  
+	    }  
+	} 
+	
 }
