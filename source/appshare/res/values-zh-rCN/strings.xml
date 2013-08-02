@@ -41,7 +41,7 @@
     <string name="toast_send">发送</string>
     <string name="toast_rename">修改名称</string>
     <string name="toast_unselect">取消全部选择</string>
-    <string name="toast_refuse">关闭</string>
+    <string name="toast_refuse">关闭这条提醒</string>
 
     <string name="packagename">包名</string>
     <string name="version">版本</string>

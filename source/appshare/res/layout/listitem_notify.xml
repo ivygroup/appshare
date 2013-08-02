@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-     >
+    android:layout_height="match_parent">
+    
     <TextView 
         android:id="@+id/notify_text"
         android:layout_width="wrap_content"
@@ -16,13 +15,12 @@
         android:focusable="true"
         />
     <ImageButton
-            android:id="@+id/clear_all_notify"
+            android:id="@+id/clear_notify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_notify_clear_normal"
             android:background="@drawable/ic_notify_clear"
-            android:layout_margin="5dp"
             android:layout_alignParentRight="true"
             android:focusable="true"
              />

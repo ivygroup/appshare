@@ -41,7 +41,7 @@
     <string name="toast_send">Send</string>
     <string name="toast_rename">Change name</string>
     <string name="toast_unselect">Un-select all</string>
-    <string name="toast_refuse">Close</string>
+    <string name="toast_refuse">Close the notification</string>
 
 	<string name="packagename">Package</string>
     <string name="version">Version</string>

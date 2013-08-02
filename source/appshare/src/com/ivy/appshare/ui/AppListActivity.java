@@ -586,7 +586,7 @@ public class AppListActivity extends IvyActivityBase implements
 		case R.id.btn_right:
 			toastTextId = R.string.toast_send;
 			break;
-		case R.id.clear_all_notify:
+		case R.id.clear_notify:
 			toastTextId = R.string.toast_refuse;
 			break;
 		}
@@ -752,7 +752,7 @@ public class AppListActivity extends IvyActivityBase implements
 					intent.putExtra("nickName", mFileShareName.get(position));
 					startActivityForResult(intent, REQUEST_RECEIVE_APP);
 				}});
-	        ImageButton cancelReceive = (ImageButton)layoutListItem.findViewById(R.id.clear_all_notify);  
+	        ImageButton cancelReceive = (ImageButton)layoutListItem.findViewById(R.id.clear_notify);  
 	        cancelReceive.setOnClickListener(new OnClickListener(){
 
 				@Override
