@@ -7,9 +7,9 @@
     <TextView 
         android:id="@+id/notify_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
         android:background="@drawable/list_selector"
         android:textColor="@color/list_main"
 	    android:textSize="@dimen/list_main_textsize"
