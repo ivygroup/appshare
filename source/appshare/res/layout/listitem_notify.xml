@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
     
     <TextView 
         android:id="@+id/notify_text"
@@ -14,16 +13,17 @@
         android:textColor="@color/list_main"
 	    android:textSize="@dimen/list_main_textsize"
         android:focusable="true"
-        />
+    />
+    
     <ImageButton
-            android:id="@+id/clear_notify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_notify_clear_normal"
-            android:background="@drawable/list_selector"
-            android:layout_alignParentRight="true"
-            android:focusable="true"
-             />
+        android:id="@+id/clear_notify"
+	    android:layout_width="@dimen/listbar_layout_height"
+	    android:layout_height="@dimen/listbar_layout_height"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_notify_clear_normal"
+        android:background="@drawable/list_selector"
+        android:layout_alignParentRight="true"
+        android:focusable="true"
+    />
 
 </RelativeLayout>
