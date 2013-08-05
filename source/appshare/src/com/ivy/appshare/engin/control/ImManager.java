@@ -95,7 +95,9 @@ public class ImManager {
     }
 
     public void changeUserState(int state) {
-        mIm.changeUserState(state);
+    	if (mIm != null) {
+            mIm.changeUserState(state);
+    	}
     }
 
     // for Data read and write.
