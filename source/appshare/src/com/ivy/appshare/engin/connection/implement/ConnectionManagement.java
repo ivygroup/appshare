@@ -324,10 +324,10 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     public boolean disconnectFromIvyNetwork(){
         Log.d(TAG, "disconnectFromIvyNetwork");
 
@@ -336,15 +336,15 @@ public class ConnectionManagement implements WifiStateChangedListener {
             || (mIvyNetworkWifiConfiguration.SSID.length() == 0)){
             return false;
         }
-        
-        
+
+
         //mConnectedAP will be reset when get WIFI_DISCONNECTED intent.
         //mWifiManager.disconnect();
         forgetNetwork(AccessPointInfo.removeDoubleQuotes(mIvyNetworkWifiConfiguration.SSID));
         //resetNetworkInfoFromPreference();
         return true;
     }
-    
+
     public boolean startScan(){
         Log.d(TAG, "startScan");
         if (false == mWifiManager.isWifiEnabled()){
@@ -354,13 +354,13 @@ public class ConnectionManagement implements WifiStateChangedListener {
             if (mRequestScan == true){
                 return false;
             }
-            
+
             mRequestScan = true;
         }
         mConnectionHandler.sendEmptyMessage(Msg_StartScan);
         return true;
     }
-    
+
     public boolean isWifiEnabled(){
         return mWifiManager.isWifiEnabled();
     }
@@ -374,7 +374,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
         if (false == mWifiManager.isWifiEnabled()){
             return false;
         }
-        
+
         synchronized (mLock){
             if (mRequestScan == false){
                 return false;
@@ -393,7 +393,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
         }
         return false;
     }
-    
+
     public boolean wifiP2pStopDiscovery(){
         Log.d(TAG, "wifiP2pStopDiscovery");
         if (mP2pSupported){
@@ -402,7 +402,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
         }
         return false;
     }
-    
+
     public InetAddress getBroadcastAddress(){
         DhcpInfo dhcp = mWifiManager.getDhcpInfo();
         int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
@@ -416,20 +416,20 @@ public class ConnectionManagement implements WifiStateChangedListener {
             return null;
         }
     }
-    
+
     public boolean isWifiP2pSupported(){
         return mP2pSupported;
     }
-    
+
     public boolean connectToWifiP2pPeer(String peerID){
         Log.d(TAG, "connectToWifiP2pPeer");
         if (!mP2pSupported){
             return false;
         }
-        
+
         return mWifiP2pManagement.connect(peerID);
     }
-    
+
     public boolean cancelConnectWifiP2p() {
         if (!mP2pSupported){
             return false;
@@ -445,7 +445,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
 
         mWifiP2pManagement.removeGroup();
         return true;
-        
+
     }
 
     @Override
@@ -453,10 +453,10 @@ public class ConnectionManagement implements WifiStateChangedListener {
         synchronized(mLock){
             mIsAirplaneEnabled = enabled;
         }
-        
+
         mConnectionHandler.sendEmptyMessage(Msg_AirplaneModeChanged);
     }
-    
+
     @Override
     public void onWifiConnected(WifiInfo wifiInfo) {
         synchronized(mLock){
@@ -469,22 +469,22 @@ public class ConnectionManagement implements WifiStateChangedListener {
     public void onWifiDisconnected() {
         mConnectionHandler.sendEmptyMessage(Msg_WifiDisconnected);
     }
-    
+
     @Override
     public void onWifiHotspotStateChanged(int state) {
         synchronized(mLock){
             Log.d(TAG, "onWifiHotspotStateChanged:" + state);
             mWifiApState = state;
         }
-        
+
         mConnectionHandler.sendEmptyMessage(Msg_WifiHotspotStateChanged);
     }
-    
+
     @Override
     public void onWifiConnecting() {
         mConnectionHandler.sendEmptyMessage(Msg_WifiConnecting);
     }
-    
+
     @Override
     public void onScanResultAvailable(List<ScanResult> results) {
         synchronized(mLock){
@@ -496,7 +496,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
         }
         mConnectionHandler.sendEmptyMessage(Msg_ScanResultAvailable);
     }
-    
+
     @Override
     public void onWifiStateChanged(int state) {
         synchronized(mLock){
@@ -504,31 +504,33 @@ public class ConnectionManagement implements WifiStateChangedListener {
         }
         mConnectionHandler.sendEmptyMessage(Msg_WifiStateChanged);
     }
-    
+
     private void initManufacturerList(){
         mManufacturerList.add("samsung");
     }
-    
+
     private void forgetNetworkIfPossible() {
         List<WifiConfiguration> configs = mWifiManager.getConfiguredNetworks();
-
         if (configs == null) {
             return;
         }
 
         for(WifiConfiguration c : configs){
             if (isIvyHotspot(c)){
-                mWifiHiddenAPI.forgetNetwork(mChannel, c.networkId);
+                WifiConfiguration tempConfig = this.IsExsits(c.SSID);
+                if (tempConfig != null) {
+                    mWifiHiddenAPI.forgetNetwork(mChannel, tempConfig.networkId);
+        		}
             }
         }
-        
-     
+
+
         /*
         String ssid = mPreferences.getString(KEY_SSID, VALUE_NO_SSID);
         if (ssid.equals(VALUE_NO_SSID) == true){
             return;
         }
-        
+
         List<WifiConfiguration> configs = mWifiManager.getConfiguredNetworks();
         if ((configs == null) || (configs.size() == 0)){
             return;
@@ -539,68 +541,81 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 mWifiHiddenAPI.forgetNetwork(mChannel, config.networkId);
             }
         }
-        
+
         // No matter the saved SSID exist in wifi configuration list or not,
         // reset to "NONE" at start up.
         resetNetworkInfoFromPreference();
         */
     }
-    
-    private boolean forgetNetwork(String ssid){
-        Log.d(TAG, "forgetNetwork, mConnectedAP.mSSID:" + mConnectedAP.mSSID + ", ssid:" + ssid);
 
-        if ((mConnectedAP.mSSID != null) 
-                && mConnectedAP.mSSID.equals(ssid)){
-            Log.d(TAG, "forgetNetwork:" + ssid + ", networkId:" + mConnectedAP.mNetworkId);
-            mWifiHiddenAPI.forgetNetwork(mChannel, mConnectedAP.mNetworkId);
-            return true;
-        }
-        
-        for (Entry<String, AccessPointInfo> info : mAccessPoints.entrySet()){
-            if (info.getValue().mSSID.equals(ssid)){
+    private boolean forgetNetwork(String ssid){
+        WifiConfiguration tempConfig = this.IsExsits(ssid);
+		if (tempConfig != null) {
+			if ((mConnectedAP.mSSID != null) && mConnectedAP.mSSID.equals(ssid)) {
                 Log.d(TAG, "forgetNetwork:" + ssid + ", networkId:" + mConnectedAP.mNetworkId);
-                mWifiHiddenAPI.forgetNetwork(mChannel, info.getValue().mNetworkId);
-                return true;
+				mWifiHiddenAPI.forgetNetwork(mChannel, tempConfig.networkId);
+				return true;
+			}
+
+			for (Entry<String, AccessPointInfo> info : mAccessPoints.entrySet()) {
+				if (info.getValue().mSSID.equals(ssid)) {
+                    Log.d(TAG, "forgetNetwork:" + ssid + ", networkId:" + mConnectedAP.mNetworkId);
+					mWifiHiddenAPI.forgetNetwork(mChannel, tempConfig.networkId);
+					return true;
+				}
+			}
+		} else {
+			return true;
+		}
+		return false;
+    }
+
+    private WifiConfiguration IsExsits(String SSID) {
+        List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
+        for (WifiConfiguration existingConfig : existingConfigs)
+        {
+            if (existingConfig.SSID.equals("\""+SSID+"\""))
+            {
+                return existingConfig;
             }
         }
-        return false;
+        return null;
     }
-    
+
     private void storeNetworkInfoToPreference(String ssid){
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(KEY_SSID, AccessPointInfo.removeDoubleQuotes(ssid));
         editor.commit();
     }
-    
+
     private void resetNetworkInfoFromPreference(){
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(KEY_SSID, VALUE_NO_SSID);
         editor.commit();
     }
-    
+
     private void setSoftapEnabled(boolean enable) {
         int wifiState = mWifiManager.getWifiState();
-        
-         
+
         if (enable && ((wifiState == WifiManager.WIFI_STATE_ENABLING) ||
                (wifiState == WifiManager.WIFI_STATE_ENABLED))) {
             mPreviousWifiState = wifiState;
             mWifiManager.setWifiEnabled(false);
         }
-        
+
         mWifiHiddenAPI.setWifiApEnabled(mIvyHotspotWifiConfigation, enable);
-        
-        if ((enable == false) 
+
+        if ((enable == false)
                 && ((wifiState == WifiManager.WIFI_STATE_DISABLED)
-                    || (wifiState == WifiManager.WIFI_STATE_DISABLING))                
-                && (mPreviousWifiState == WifiManager.WIFI_STATE_ENABLED) 
+                    || (wifiState == WifiManager.WIFI_STATE_DISABLING))
+                && (mPreviousWifiState == WifiManager.WIFI_STATE_ENABLED)
                     || (mPreviousWifiState == WifiManager.WIFI_STATE_ENABLING)){
             mWifiManager.setWifiEnabled(true);
         }
     }
-    
+
     private void initIntentReceiver(){
-        
+
         mIntentFilter = new IntentFilter(WifiManagerHiddenAPI.WifiHiddenAPI.WIFI_AP_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
@@ -613,66 +628,65 @@ public class ConnectionManagement implements WifiStateChangedListener {
 
         mReceiver = new ConnectionReceiver(mContext, this);
         mContext.registerReceiver(mReceiver, mIntentFilter);
-        
+
         IntentFilter screenStateFilter = new IntentFilter();
         screenStateFilter.addAction(Intent.ACTION_SCREEN_ON);
         screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
         mContext.registerReceiver(mScreenStateReceiver, screenStateFilter);
     }
-    
+
     private boolean isP2pSupportedByUs(){
         /*if ((sSDKVersion >= Build.VERSION_CODES.JELLY_BEAN)
             && (PHONE_MATCHER.contains(Build.MANUFACTURER))){
             return true;
         }*/
-        
+
         if (sSDKVersion >= Build.VERSION_CODES.JELLY_BEAN){
             return true;
         }
         return false;
     }
-    
+
     private void unInitIntentReceiver() {
-       
-        mContext.unregisterReceiver(mReceiver);        
+
+        mContext.unregisterReceiver(mReceiver);
         mContext.unregisterReceiver(mScreenStateReceiver);
     }
 
-    
     private void dispatchOnAirplaneModeChanged(boolean enabled){
         Log.d(TAG, "Airplane mode is " + ((enabled) ? "enabled" : "disabled"));
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onAirplaneModeChanged(enabled);
         }
     }
-    
+
     private void dispatchOnWifiConnected(AccessPointInfo connectionInfo){
         Log.d(TAG, "WifiConnected:" + connectionInfo.getConnectionState());
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onWifiConnected(connectionInfo);
         }
     }
-    
+
     private void dispatchOnWifiDisconnected(String disconnectedSSID, int connectionType, int  wifiState){
         Log.d(TAG, "WifiDisconnected: ssid:" + disconnectedSSID + ", previousState:" + wifiState);
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onWifiDisconnected(disconnectedSSID, connectionType, wifiState);
         }
     }
-    
+
     private void dispatchOnWifiHotspotStateChanged(int connectionType, int state){
         Log.d(TAG, "WifiHotspotStateChanged:" + state);
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onWifiHotspotStateChanged(connectionType, state);
         }
     }
-    
+
     private void dispatchOnScanResultAvailable(ArrayList<AccessPointInfo> list){
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onScanResultAvailable(list);
         }
     }
-    
+
     private void dispatchOnHotspotIPAvailable(InetAddress addr){
         if (addr == null) {
             return;
@@ -682,19 +696,19 @@ public class ConnectionManagement implements WifiStateChangedListener {
             l.getValue().onIvyHotspotIPAvailable(addr);
         }
     }
-    
+
     private void dispatchOnWifiConnecting(AccessPointInfo connetionInfo){
         Log.d(TAG, "WifiConnecting:" + connetionInfo.getConnectionState());
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onWifiConnecting(connetionInfo);
         }
     }
-    
+
     private void dispatchOnWifiEnabled(){
         Log.d(TAG, "WifiEnabled");
         for (Entry<Object, ConnectionStateListener> l : mListeners.entrySet()){
             l.getValue().onWifiEnabled();
-        }   
+        }
     }
     
     private void dispatchOnWifiDisabled(){
@@ -754,7 +768,6 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 return false;
             }
         }
-
         mIvyHotspotWifiConfigation.BSSID = mMac;
 
         String s = mMac.replaceAll(":", "");
@@ -772,13 +785,13 @@ public class ConnectionManagement implements WifiStateChangedListener {
             mIvyHotspotWifiConfigation.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
         }
         mIvyHotspotWifiConfigation.preSharedKey= Long.toString(pass);
-        
+
         Log.d(TAG, "Hotspot SSID: " + mIvyHotspotWifiConfigation.SSID
 					+ ", Password: " + mIvyHotspotWifiConfigation.preSharedKey);
-        
+
         return true;
     }
-    
+
     private boolean generateIvyHotspotWifiConfigation2(int shareCount) {
         if (mMac == null){
             //Try to get device MAC address
@@ -817,10 +830,10 @@ public class ConnectionManagement implements WifiStateChangedListener {
             mIvyHotspotWifiConfigation.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
         }
         mIvyHotspotWifiConfigation.preSharedKey= SSID_PASSWORD;
-        
+
         Log.d(TAG, "Hotspot SSID: " + mIvyHotspotWifiConfigation.SSID
                     + ", Password: " + mIvyHotspotWifiConfigation.preSharedKey);
-        
+
         return true;
     }
 
@@ -828,17 +841,15 @@ public class ConnectionManagement implements WifiStateChangedListener {
         String s = selectedAp.mBSSID.replaceAll(":", "");
         Long l = Long.parseLong(s, 16);
         long pwd = ((l + (10000000))) * 3 ;
-        
+
         // mIvyNetworkWifiConfiguration.preSharedKey = '"' + Long.toString(pwd) + '"';
         mIvyNetworkWifiConfiguration.preSharedKey = '"' + SSID_PASSWORD + '"';
         mIvyNetworkWifiConfiguration.allowedKeyManagement.set(KeyMgmt.WPA_PSK);
 
         mIvyNetworkWifiConfiguration.SSID = '"' + selectedAp.mSSID + '"';
         mIvyNetworkWifiConfiguration.BSSID = selectedAp.mBSSID;
-    } 
-    
+    }
 
-    
     public static InetAddress intToInetAddress(int hostAddress){
         byte[] addressBytes = {(byte) (0xff & hostAddress),
                                 (byte) (0xff & (hostAddress >> 8)),
@@ -851,46 +862,45 @@ public class ConnectionManagement implements WifiStateChangedListener {
             return null;
         }
     }
-    
+
     private boolean isIvyHotspot(ScanResult result){
         String ssid = AccessPointInfo.removeDoubleQuotes(result.SSID);
         String bssid = result.BSSID;
-        
+
         return isIvyHotspot(ssid, bssid);
     }
-    
-    
+
     private boolean isIvyHotspot(WifiInfo info){
         String ssid = AccessPointInfo.removeDoubleQuotes(info.getSSID());
         String bssid = info.getBSSID();
-        
+
         return isIvyHotspot(ssid, bssid);
     }
-    
+
     private boolean isIvyHotspot(WifiConfiguration config){
         String ssid = AccessPointInfo.removeDoubleQuotes(config.SSID);
         String bssid = config.BSSID;
-        
+
         return isIvyHotspot(ssid, bssid);
     }
-    
+
     /*
-    private boolean isIvyHotspot(String ssid, String bssid){
+       private boolean isIvyHotspot(String ssid, String bssid){
         if (ssidIsInIvyRoom(ssid)) {
             return true;
         }
 
         long ssid_int = -1;
         long l = -1;
-        
-        
+
+
         if ((ssid == null) 
                 || (ssid.length() == 0) 
                 || (bssid == null) 
                 || (bssid.length() == 0)){
             return false;
         }
-        
+
         try{
             ssid_int = Long.parseLong(ssid.substring(ssid.lastIndexOf("-") + 1));
             String s = bssid.replace(":", "");
@@ -898,12 +908,12 @@ public class ConnectionManagement implements WifiStateChangedListener {
         } catch (NumberFormatException ex){
             return false;
         }
-        
+
         if (ssid_int == l*2 + 1){
             Log.d(TAG, "IvyNetwork found:" + ssid);
             return true;
         }
-        
+
         return false;
     }
     */
@@ -962,7 +972,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 }
                 dispatchOnAirplaneModeChanged(enabled);
                 break;
-                
+
             case Msg_WifiConnected:
                 synchronized (mLock){
                     mConnectedAP.update(mWifiInfo);
@@ -974,7 +984,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 }
                 dispatchOnWifiConnected(mConnectedAP);
                 break;
-                
+
             case Msg_WifiDisconnected:
                 String ssid = null;
                 int newState = ConnectionState.CONNECTION_UNKNOWN;
@@ -996,7 +1006,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 }
                 dispatchOnWifiDisconnected(ssid, ConnectionState.CONNECTION_TYPE_WIFI, newState);
                 break;
-                
+
             case Msg_WifiHotspotStateChanged:
                 int state = ConnectionState.CONNECTION_UNKNOWN;
                 synchronized (mLock){
@@ -1008,7 +1018,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                         } else if (wifiApConfig != null){
                             mConnectedAP.update(wifiApConfig);
                         }
-                        
+
                         sendEmptyMessage(Msg_GetHotspotIP);
                     } else if (mWifiApState == WifiManagerHiddenAPI.WifiHiddenAPI.WIFI_AP_STATE_ENABLING){
                         state = ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLING;
@@ -1023,7 +1033,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
 
                 dispatchOnWifiHotspotStateChanged(ConnectionState.CONNECTION_TYPE_HOTSPOT, state);
                 break;
-                
+
             case Msg_ScanResultAvailable:
                 synchronized (mLock){
                 	mAccessPoints.clear();
@@ -1033,7 +1043,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                                 || !isIvyHotspot(result)){
                             continue;
                         }
-                        
+
                         mAccessPoints.put(result.SSID, new AccessPointInfo(result));
                     }
                 }
@@ -1041,12 +1051,12 @@ public class ConnectionManagement implements WifiStateChangedListener {
                 ArrayList<AccessPointInfo> list = new ArrayList<AccessPointInfo>(mAccessPoints.values());
                 dispatchOnScanResultAvailable(list);
                 break;
-                
+
             case Msg_StartScan:
                 mWifiManager.startScan();
                 sendEmptyMessageDelayed(Msg_StartScan, 5000);
                 break;
-                
+
             case Msg_GetHotspotIP:
                 new Thread(new Runnable(){
 
@@ -1057,10 +1067,10 @@ public class ConnectionManagement implements WifiStateChangedListener {
                         Log.d(TAG, "Hotspot IP:" + mConnectedAP.mIpAddress.getHostAddress());
                         dispatchOnHotspotIPAvailable(mConnectedAP.mIpAddress);
                     }
-                    
-                }).start();
+
+                    }).start();
                 break;
-                
+
             case Msg_WifiConnecting:
                 synchronized (mLock){
                     WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
@@ -1069,7 +1079,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                         		" So ignore this msg.");
                         return;
                     }
-                    
+
                     if (isIvyHotspot(wifiInfo)){
                         mConnectedAP.setConnectionState(ConnectionState.CONNECTION_STATE_WIFI_IVY_CONNECTING);
                         mConnectedAP.update(mIvyNetworkWifiConfiguration);
@@ -1080,7 +1090,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                     dispatchOnWifiConnecting(mConnectedAP);
                 }
                 break;
-                
+
             case Msg_WifiStateChanged:
                 synchronized (mLock){
                     if (mWifiState == WifiManager.WIFI_STATE_ENABLED){
@@ -1098,7 +1108,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
     private native int native_getHotspotIp(String node);
     static{
         System.loadLibrary("appsharenative");
-        
+
         PHONE_MATCHER.add("samsung");
     }
 
