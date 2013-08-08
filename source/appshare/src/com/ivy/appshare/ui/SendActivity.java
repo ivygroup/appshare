@@ -58,6 +58,8 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 
     private SenderStatusManager mSenderStatusManager;
 
+    private int mConnectionState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +81,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new SendListAdapter(this);
         mListView.setAdapter(mAdapter);
-        
+
         mSenderStatusManager = new SenderStatusManager();
 
         // handler for messages
@@ -274,12 +276,14 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
             Person person = PersonManager.getInstance().getPerson(personKey);
 
             if (IvyMessages.VALUE_PERSONTYPE_NEW_USER == type) {
-            	if (mImManager != null && mSenderStatusManager.isReady()) {
-            		mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_IAMHOTSPOT));
-            	} else {
-            	    if (mImManager != null) {
-                        mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_ANSWERNO));
-                    }
+            	if (mImManager != null) {
+            		if (mSenderStatusManager.isReady()) {
+                		mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_IAMHOTSPOT));
+            		} else {
+                    	if (mConnectionState == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
+                            mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_ANSWERNO));
+                    	}
+            		}
             	}
             } else if (IvyMessages.VALUE_PERSONTYPE_SOMEONE_EXIT == type) {
                 if (mImManager != null && mSenderStatusManager.canEndCurrentWorkSession(person)) {
@@ -389,6 +393,7 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
                 if (state == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
                     mSenderStatusManager.setStatus(SenderStatusManager.Status.READY);
                 }
+                mConnectionState = state;
                 mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_NETWORK_STATE_CHANGED, type, state, ssid));
 
             } else if (action.equals(IvyMessages.INTENT_NETWORK_FINISHSCANIVYROOM)) {
