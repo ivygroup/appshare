@@ -41,7 +41,7 @@ public class Sender {
 	public Sender(NotifactionEngin engin) {
 		// Log.v(TAG, "the thread name =" + Thread.currentThread().getName());
 	    mWorkerUdp = Worker.getUdpWorker();
-	    mWorkerUdpMultiCast = Worker.getMultiCastWorker();
+	    // mWorkerUdpMultiCast = Worker.getMultiCastWorker();
 		mMyself = LocalSetting.getInstance().getMySelf();
 		mNotifactionEngin = engin;
 
@@ -56,7 +56,7 @@ public class Sender {
 				    PackageSend packageSend = (PackageSend)msg.obj;
 				    // Log.d(TAG, "BroadCast msg = " + packageSend.mSendMessage);
 				    mWorkerUdp.broadcast(packageSend.mSendMessage.toString(), mMyself);
-				    mWorkerUdpMultiCast.broadcast(packageSend.mSendMessage.toString(), mMyself);
+				    // mWorkerUdpMultiCast.broadcast(packageSend.mSendMessage.toString(), mMyself);
 				}
 					break;
 					
@@ -124,7 +124,7 @@ public class Sender {
 		mWorkerUdp = null;
 		// mWorkerUdpMultiCast = null;
 		Worker.releaseUdpWorker();
-		Worker.releaseUdpMultiCastWorker();
+		// Worker.releaseUdpMultiCastWorker();
 	}
 
 	private StringBuffer generateIvyAdditionalInfo() {

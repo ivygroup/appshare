@@ -48,7 +48,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
             new HashMap<Object, ConnectionStateListener>();
     private WifiManager mWifiManager;
     private WifiManagerHiddenAPI mWifiManagerHiddenAPI;
-    private MulticastLock mMulticastLock;
+    // private MulticastLock mMulticastLock;
     private Object mChannel;
     private HandlerThread mHandlerThread;
     private ConnectionHandler mConnectionHandler;
@@ -97,7 +97,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
     private final BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
+                /*String action = intent.getAction();
                 
                 if (action.equals(Intent.ACTION_SCREEN_ON)){
                     Log.d(TAG, "Screen On");
@@ -109,7 +109,7 @@ public class ConnectionManagement implements WifiStateChangedListener {
                     if (mMulticastLock.isHeld()){
                         mMulticastLock.release();
                     }
-                }
+                }*/
             }
     };
     
@@ -145,10 +145,10 @@ public class ConnectionManagement implements WifiStateChangedListener {
             mWifiHiddenAPI.asyncConnect(mContext, mConnectionHandler);
         }
         
-        mMulticastLock = mWifiManager.createMulticastLock("ConnectionManagement");
+        /*mMulticastLock = mWifiManager.createMulticastLock("ConnectionManagement");
         if (!mMulticastLock.isHeld()){
             mMulticastLock.acquire();
-        }
+        }*/
         
         initIntentReceiver();
         
@@ -179,9 +179,9 @@ public class ConnectionManagement implements WifiStateChangedListener {
             return false;
         }
         
-        if ((mMulticastLock != null) && mMulticastLock.isHeld()){
+        /*if ((mMulticastLock != null) && mMulticastLock.isHeld()){
             mMulticastLock.release();
-        }
+        } */
         
         mConnectionHandler.removeCallbacksAndMessages(null);
         if (mHandlerThread != null){
