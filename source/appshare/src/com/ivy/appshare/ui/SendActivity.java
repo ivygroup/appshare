@@ -392,6 +392,10 @@ public class SendActivity extends IvyActivityBase implements OnClickListener, Tr
 
                 if (state == ConnectionState.CONNECTION_STATE_HOTSPOT_ENABLED) {
                     mSenderStatusManager.setStatus(SenderStatusManager.Status.READY);
+                } else if (state == ConnectionState.CONNECTION_STATE_HOTSPOT_DISABLED) {
+                    if (mIvyConnectionManager != null) {
+                        mIvyConnectionManager.createHotspot(NeedSendAppList.getInstance().mListAppInfo.size());
+                    }
                 }
                 mConnectionState = state;
                 mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_NETWORK_STATE_CHANGED, type, state, ssid));
