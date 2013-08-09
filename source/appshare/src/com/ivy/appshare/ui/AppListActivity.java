@@ -440,6 +440,7 @@ public class AppListActivity extends IvyActivityBase implements
 		filter.addAction(IvyMessages.INTENT_NETWORK_FINISHSCANIVYROOM);
 		filter.addAction(IvyMessages.INTENT_NETWORK_DISCOVERYWIFIP2P);
 		registerReceiver(mNetworkReceiver, filter);
+		updateList();
 	}
 
 	@Override

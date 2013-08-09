@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ivy.appshare.MyApplication;
 import com.ivy.appshare.R;
 import com.ivy.appshare.engin.connection.ConnectionState;
 import com.ivy.appshare.engin.constdefines.IvyMessages;
@@ -150,6 +151,9 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
 
     @Override
     protected void onDestroy() {
+    	if (mSSID != null) {
+    		MyApplication.getInstance().addFilterData(mSSID);
+    	}
         doDownLine();
         if (mIvyConnectionManager != null) {
             mIvyConnectionManager.disconnectFromIvyNetwork();
