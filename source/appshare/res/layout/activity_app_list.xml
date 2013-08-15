@@ -9,8 +9,6 @@
         android:id="@+id/shared_person"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="15dp"
         android:listSelector="@drawable/list_selector" />
 
     <include layout="@layout/include_modify_action_bar" />

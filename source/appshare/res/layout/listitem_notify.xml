@@ -13,6 +13,8 @@
         android:textColor="@color/list_main"
 	    android:textSize="@dimen/list_main_textsize"
         android:focusable="true"
+        android:drawableLeft="@drawable/actionbar_icon_contact2"
+        android:drawablePadding="4dp"
     />
     
     <ImageButton
@@ -20,7 +22,7 @@
 	    android:layout_width="@dimen/listbar_layout_height"
 	    android:layout_height="@dimen/listbar_layout_height"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_notify_clear_normal"
+        android:src="@drawable/btn_photos_delete"
         android:background="@drawable/list_selector"
         android:layout_alignParentRight="true"
         android:focusable="true"

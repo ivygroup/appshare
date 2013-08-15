@@ -47,4 +47,5 @@
     <color name="selected_share_files">#99D6EB</color>
 
     <color name="bg_popupwindow">#EEBADBEE</color>
+    <color name="action_bar_background">#222222</color>
 </resources>
