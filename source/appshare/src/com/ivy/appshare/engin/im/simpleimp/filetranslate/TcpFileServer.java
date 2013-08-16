@@ -109,7 +109,7 @@ public class TcpFileServer extends Thread {
 	}
 
 	private void stopServer() {
-		mStatus = RunningStatus.WantStop;
+		mTaskTimeOutProtection.stopTheThread();
 		mTaskTimeOutProtection.interrupt();
 		try {
 		    mTaskTimeOutProtection.join();
@@ -117,6 +117,7 @@ public class TcpFileServer extends Thread {
 		    Log.i(TAG, "when join fileserver stop, occore a error. " + e.getMessage());
 		}
 
+		mStatus = RunningStatus.WantStop;
 		ServerSocket tmpServerSocket = mServerSocket;
 		mServerSocket = null;
 		closeServerSocket(tmpServerSocket);
@@ -259,9 +260,19 @@ public class TcpFileServer extends Thread {
 
 
 	private class TaskTimeOutProtection extends Thread {
+	    private boolean mStop;
+
+	    public TaskTimeOutProtection() {
+	        mStop = false;
+        }
+
+	    public void stopTheThread() {
+	        mStop = true;
+	    }
+
 	    @Override
 	    public void run() {
-	        while (mStatus != RunningStatus.WantStop) {
+	        while (!mStop) {
 	            synchronized (mTasks) {
 	                Iterator<FileTask> it = mTasks.values().iterator();
 	                while (it.hasNext()) {
