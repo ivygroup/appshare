@@ -60,13 +60,14 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     private PersonBroadCastReceiver mPersonReceiver;
     private MessageBroadCastReceiver mMessageReceiver;
     private NetworkReceiver mNetworkReceiver;
+    private boolean mFirstConnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_send);
-
+        mFirstConnect = true;
         // get the data from intent.
         Intent intent = getIntent();
         mSSID = intent.getStringExtra("ssid");
@@ -273,8 +274,9 @@ public class ReceiveActivity extends IvyActivityBase implements OnClickListener,
     private void processInnerMessage(Person person, int msgType) {
     	switch (msgType) {
     		case IvyInnerMessage.IVY_APP_IAMHOTSPOT:
-    			if (mImManager != null) {
+    			if ((mImManager != null) && (mFirstConnect)) {
     				mImManager.sendMessage(person, IvyInnerMessage.getIvyInnerMessage(IvyInnerMessage.IVY_APP_REQUEST));
+    				mFirstConnect = false;
     			}
     			break;
     		case IvyInnerMessage.IVY_APP_ANSWERYES:
