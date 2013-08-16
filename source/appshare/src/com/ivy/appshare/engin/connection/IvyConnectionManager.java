@@ -530,6 +530,9 @@ public class IvyConnectionManager implements ConnectionStateListener {
         } catch (SocketException e) {
             Log.e(TAG, "cant get my ips. " + e.getMessage());
             return;
+        } catch (Exception ex) {
+        	Log.e(TAG, "get my ips error. exception="+ex);
+        	return;
         }
 
         while (allNetInterfaces.hasMoreElements()) {
