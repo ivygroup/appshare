@@ -47,6 +47,11 @@ public class APKLoader {
 
 
     public interface ApkLoaderDataChang {
+        public static final int EVENT_BEGIN = 0;
+        public static final int EVENT_END = 1;
+        public static final int EVENT_CANCEL = 2;
+
+        public void onLoadEvent(int event);
         public void apkDataChanged(List<AppsInfo> data);
         public void mySelfLoaded(AppsInfo info);
     }
@@ -118,14 +123,13 @@ public class APKLoader {
     }
 
     public void unInit() {
-		if (mImageLoader != null) {
+        if (mTask != null) {
+            mTask.cancel(true);
+            mTask = null;
+        }
+        if (mImageLoader != null) {
 			mImageLoader.unInit();
 			mImageLoader = null;
-		}
-		if (mTask != null) {
-			mTask.quit();
-			mTask.cancel(true);
-			mTask = null;
 		}
     }
 
@@ -161,14 +165,13 @@ public class APKLoader {
     public class SearchAsyncTask extends AsyncTask<Integer, Void, Integer> 
         implements ImageLoader.LoadFinishListener{
 
-    	private boolean mQuiting = false;
         private void readFile(final File[] files){
-        	if (mQuiting) {
+        	if (isCancelled()) {
         		return;
         	}
             if(files!=null && files.length>0){
                 for(int i=0;i<files.length;i++) {
-                	if (mQuiting) {
+                	if (isCancelled()) {
                 		return;
                 	}
                     if (files[i].isDirectory()) {
@@ -177,6 +180,9 @@ public class APKLoader {
                         String path = files[i].getPath();
                         String suffix = path.substring(path.lastIndexOf('.')+1);
                         if (suffix.compareToIgnoreCase("APK") == 0) {
+                            if (isCancelled()) {
+                                return;
+                            }
                         	if (mImageLoader != null) {
                                 mImageLoader.loadImage(null, path, 0, FileType.FileType_App);
                         	}
@@ -189,11 +195,14 @@ public class APKLoader {
         private void queryInstalledAppInfo() {
             PackageManager pm = MyApplication.getInstance().getPackageManager();
 
+            if (isCancelled()) {
+                return;
+            }
             List<PackageInfo> listPackages = 
                     pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
 
             for (PackageInfo packageinfo : listPackages) {
-            	if (mQuiting) {
+            	if (isCancelled()) {
             		return;
             	}
                 ApplicationInfo app = packageinfo.applicationInfo;
@@ -212,12 +221,7 @@ public class APKLoader {
             }
         }
 
-        public void quit() {
-        	mQuiting = true;
-            Log.d(TAG, "Quit SearchTask");
-        }
         public SearchAsyncTask() {
-        	mQuiting = false;
             mImageLoader = new ImageLoader(this);
         }
 
@@ -230,10 +234,20 @@ public class APKLoader {
             readFile(Environment.getExternalStorageDirectory().listFiles());
             return 0;
         }
-        
-        @Override  
+
+        @Override
+        protected void onPreExecute() {
+            mApkLoaderDataChang.onLoadEvent(ApkLoaderDataChang.EVENT_BEGIN);
+        }
+
+        @Override
         protected void onPostExecute(Integer result) {
-            Log.d(TAG, "Search Over");
+            mApkLoaderDataChang.onLoadEvent(ApkLoaderDataChang.EVENT_END);
+        }
+
+        @Override
+        protected void onCancelled() {
+            mApkLoaderDataChang.onLoadEvent(ApkLoaderDataChang.EVENT_CANCEL);
         }
 
         @Override

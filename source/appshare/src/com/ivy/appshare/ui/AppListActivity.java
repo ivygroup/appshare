@@ -448,6 +448,7 @@ public class AppListActivity extends IvyActivityBase implements
 		super.onDestroy();
 		unregisterReceiver(mNetworkReceiver);
 		unregisterReceiver(mApkReceiver);
+		mAPKLoader.unInit();
 	}
 
 	@Override
@@ -772,6 +773,10 @@ public class AppListActivity extends IvyActivityBase implements
 				}});
 	        return layoutListItem;  
 	    }  
-	} 
-	
+	}
+
+    @Override
+    public void onLoadEvent(int event) {
+        Log.d(TAG, "Event " + event);
+    }	
 }
