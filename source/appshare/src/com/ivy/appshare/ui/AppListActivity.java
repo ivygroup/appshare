@@ -51,6 +51,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,6 +90,7 @@ public class AppListActivity extends IvyActivityBase implements
 	private List<String> mFileShareName = new ArrayList<String>();
 	private List<String> mShareData;
 	private NotifyListAdapter mAdapter;
+	private ProgressBar mProgressbar;
 
 	private ApkBroadcastReceiver mApkReceiver = new ApkBroadcastReceiver();
 
@@ -96,6 +98,7 @@ public class AppListActivity extends IvyActivityBase implements
 	private static final int MESSAGE_NETWORK_CLEAR_IVYROOM = 1;
 	private static final int MESSAGE_NETWORK_DISCOVERYWIFIP2P = 2;
 	private static final int MESSAGE_NETWORK_STATE_CHANGED = 3;
+	private static final int MESSAGE_PROGRESS_BAR_DISENABLE = 4;
 	private static final int MESSAGE_UI_SHOW_NFCTIP_WINDOW = 10;
 	private NetworkReceiver mNetworkReceiver = null;
 
@@ -135,6 +138,8 @@ public class AppListActivity extends IvyActivityBase implements
 		mButtonRight.setOnClickListener(this);
 		mButtonRight.setOnLongClickListener(this);
 
+		mProgressbar = ((ProgressBar) actionbar.findViewById(R.id.switching_bar));
+		mProgressbar.setVisibility(View.VISIBLE);
 		setSelectItemText(0);
 
 		mShareData = new ArrayList<String>();
@@ -151,6 +156,7 @@ public class AppListActivity extends IvyActivityBase implements
 
 		mAppGridView.setAdapter(mAppAdapter);
 		mAPKLoader.setAdapter(mAppAdapter);
+		
 		mHandler = new Handler(this.getMainLooper()) {
 			@Override
 			public void handleMessage(Message msg) {
@@ -161,6 +167,9 @@ public class AppListActivity extends IvyActivityBase implements
 				case MESSAGE_NETWORK_DISCOVERYWIFIP2P:
 				case MESSAGE_NETWORK_SCAN_FINISH:
 					updateList();
+					break;
+				case MESSAGE_PROGRESS_BAR_DISENABLE:
+					mProgressbar.setVisibility(View.GONE);
 					break;
 
 				case MESSAGE_UI_SHOW_NFCTIP_WINDOW:
@@ -777,5 +786,8 @@ public class AppListActivity extends IvyActivityBase implements
     @Override
     public void onLoadEvent(int event) {
         Log.d(TAG, "Event " + event);
+        if (event == 1) {
+        	mHandler.sendEmptyMessage(MESSAGE_PROGRESS_BAR_DISENABLE);
+        }
     }	
 }

@@ -48,11 +48,21 @@
                 android:textColor="@color/action_bar_text_text_color"
                 android:textSize="@dimen/list_main_textsize"
                 android:visibility="gone" />
+            
+            <ProgressBar
+                android:id="@+id/switching_bar"
+                style="?android:attr/progressBarStyleSmallTitle"
+                android:layout_width="@dimen/common_title_height"
+                android:layout_height="@dimen/common_title_height"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:padding="10dp"
+                android:visibility="gone" />
 
             <LinearLayout
+                android:layout_toLeftOf="@id/switching_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:gravity="center"
                 android:orientation="horizontal" >
 
@@ -73,15 +83,6 @@
                     android:visibility="invisible" />
             </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/switching_bar"
-                style="?android:attr/progressBarStyleSmallTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:padding="10dp"
-                android:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
 
