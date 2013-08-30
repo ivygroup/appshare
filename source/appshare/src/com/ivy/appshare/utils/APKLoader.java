@@ -84,7 +84,9 @@ public class APKLoader {
                 if (app.packageName.compareToIgnoreCase(MyApplication.mPackageName) == 0) {
                     mListAppInfo.add(0, app);
                     if (mApkLoaderDataChang != null) {
-                        mApkLoaderDataChang.mySelfLoaded(app);
+                    	if (app.sourceDir.contains("data/app/")) {
+                            mApkLoaderDataChang.mySelfLoaded(app);
+                    	}
                     }
                 } else {
                 	int nSize = mListAppInfo.size();
